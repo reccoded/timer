@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>On It</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      border-bottom: 1px solid #222;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 28px;
+      cursor: pointer;
+      padding: 0;
+      margin-right: 20px;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 500;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100%;
+      background: #181818;
+      padding: 80px 20px 20px;
+      transition: left 0.2s ease;
+      z-index: 1000;
+      border-right: 1px solid #2a2a2a;
+    }
+
+    .side-menu.open { left: 0; }
+
+    .side-menu button {
+      width: 100%;
+      padding: 16px 12px;
+      margin-bottom: 8px;
+      background: none;
+      border: none;
+      color: #fff;
+      text-align: left;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .side-menu button:hover { background: #252525; }
+
+    .controls {
+      display: flex;
+      gap: 18px;
+    }
+
+    .control-button {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      background: #1c1c1c;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .control-button:hover { background: #252525; }
+
+    .onit-page,
+    .timer-page {
+      min-height: calc(100vh - 70px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .session-time {
+      font-size: 72px;
+      font-weight: 300;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .status {
+      font-size: 30px;
+      height: 40px;
+      margin-bottom: 5px;
+    }
+
+    .total-label {
+      font-size: 16px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .total-time {
+      font-size: 32px;
+      font-weight: 300;
+      margin-bottom: 40px;
+    }
+
+    .timer-inputs {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+
+    .timer-input {
+      width: 90px;
+      height: 64px;
+      background: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 28px;
+      text-align: center;
+      outline: none;
+    }
+
+    .timer-input:focus { border-color: #666; }
+
+    .timer-start-button {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      background: #1c1c1c;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .timer-start-button:hover { background: #252525; }
+
+    .timer-start-button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .timer-status {
+      font-size: 30px;
+      height: 40px;
+      margin-bottom: 5px;
+    }
+
+    .timer-remaining {
+      font-size: 72px;
+      font-weight: 300;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .timer-progress {
+      font-size: 20px;
+      color: #999;
+      margin-bottom: 30px;
+    }
+
+    .timer-total {
+      font-size: 28px;
+      font-weight: 300;
+      margin-bottom: 40px;
+    }
+
+    .timer-flash {
+      background: #fff !important;
+      color: #111 !important;
+    }
+
+    .records-page {
+      min-height: calc(100vh - 70px);
+      padding: 40px 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .records-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .records-toolbar button {
+      padding: 9px 13px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #1c1c1c;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .records-toolbar button:hover { background: #252525; }
+
+    .daily-summary {
+      margin-top: 10px;
+      margin-bottom: 25px;
+      padding: 16px;
+      background: #181818;
+      border: 1px solid #292929;
+      border-radius: 10px;
+    }
+
+    .daily-summary-title {
+      font-size: 16px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .daily-summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 5px 0;
+      font-size: 17px;
+    }
+
+    .daily-summary-total {
+      margin-top: 8px;
+      padding-top: 10px;
+      border-top: 1px solid #2b2b2b;
+      font-size: 20px;
+    }
+
+    .records-list { margin-top: 30px; }
+
+    .record-date {
+      font-size: 20px;
+      margin-top: 30px;
+      margin-bottom: 12px;
+    }
+
+    .record-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #222;
+      gap: 15px;
+    }
+
+    .record-time {
+      font-size: 20px;
+      min-width: 0;
+    }
+
+    .record-type {
+      color: #777;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    .record-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .record-actions button {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .record-actions button:hover { color: #fff; }
+
+    .empty-records {
+      color: #777;
+      font-size: 20px;
+      margin-top: 40px;
+    }
+
+    .edit-input {
+      width: 120px;
+      background: #1c1c1c;
+      border: 1px solid #444;
+      color: #fff;
+      padding: 8px;
+      font-size: 18px;
+      border-radius: 6px;
+    }
+
+    .settings-page {
+      min-height: calc(100vh - 70px);
+      padding: 40px 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .settings-section { margin-top: 35px; }
+
+    .settings-section:first-child { margin-top: 10px; }
+
+    .settings-title {
+      font-size: 20px;
+      margin-bottom: 18px;
+    }
+
+    .settings-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid #222;
+      gap: 20px;
+    }
+
+    .settings-option-label { font-size: 18px; }
+
+    .settings-option button {
+      min-width: 150px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #1c1c1c;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .settings-option button:hover { background: #252525; }
+
+    .settings-option button.selected {
+      border-color: #777;
+      background: #2a2a2a;
+    }
+
+    .settings-current {
+      color: #999;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 0 18px; }
+      .session-time { font-size: 56px; }
+      .total-time { font-size: 28px; }
+      .timer-remaining { font-size: 52px; }
+      .timer-total { font-size: 24px; }
+      .timer-inputs { gap: 8px; }
+      .timer-input {
+        width: 82px;
+        height: 58px;
+        font-size: 24px;
+      }
+      .controls { gap: 12px; }
+      .control-button {
+        width: 58px;
+        height: 58px;
+      }
+      .record-item { align-items: center; }
+      .record-time { font-size: 18px; }
+      .record-type { font-size: 13px; }
+      .settings-option { align-items: flex-start; }
+      .settings-option button { min-width: 120px; }
+      .records-toolbar { justify-content: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <button class="menu-button" onclick="toggleMenu()">☰</button>
+    <div class="header-title" id="headerTitle">On It</div>
+  </header>
+
+  <nav class="side-menu" id="sideMenu">
+    <button onclick="showOnIt()">On It</button>
+    <button onclick="showTimer()">Timer</button>
+    <button onclick="showRecords()">Records</button>
+    <button onclick="showSettings()">Settings</button>
+  </nav>
+
+  <main class="onit-page" id="onitPage">
+    <div class="status" id="status">■</div>
+    <div class="session-time" id="sessionTime">0:00</div>
+    <div class="total-label">Total</div>
+    <div class="total-time" id="totalTime">0:00</div>
+
+    <div class="controls">
+      <button class="control-button" onclick="startSession()">▶</button>
+      <button class="control-button" onclick="pauseSession()">Ⅱ</button>
+      <button class="control-button" onclick="stopSession()">■</button>
+    </div>
+  </main>
+
+  <section class="timer-page" id="timerPage" style="display: none;"></section>
+
+  <section class="records-page" id="recordsPage" style="display: none;">
+    <div class="records-toolbar">
+      <button onclick="exportRecordsCSV()">CSV</button>
+    </div>
+
+    <div class="daily-summary" id="dailySummary"></div>
+
+    <div class="records-list" id="recordsList"></div>
+  </section>
+
+  <section class="settings-page" id="settingsPage" style="display: none;">
+    <div class="settings-section">
+      <div class="settings-title">Alert</div>
+
+      <div class="settings-option">
+        <div class="settings-option-label">Screen flashing</div>
+        <button id="flashAlertButton" onclick="setAlertMode('flash')">Select</button>
+      </div>
+
+      <div class="settings-option">
+        <div class="settings-option-label">Sound</div>
+        <button id="soundAlertButton" onclick="setAlertMode('sound')">Select</button>
+      </div>
+
+      <div class="settings-current" id="currentAlertText">
+        Current: Screen flashing
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* =====================================================
+       공통 유틸
+    ===================================================== */
+
+    function getToday() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}.${month}.${day}`;
+    }
+
+    function formatOnIt(seconds) {
+      seconds = Math.max(0, Math.floor(Number(seconds) || 0));
+
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+
+      return `${hours}:${String(minutes).padStart(2, "0")}`;
+    }
+
+    function formatTimer(seconds) {
+      seconds = Math.max(0, Math.floor(Number(seconds) || 0));
+
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+
+      return (
+        String(hours).padStart(2, "0") +
+        ":" +
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(secs).padStart(2, "0")
+      );
+    }
+
+    function formatCSVDuration(seconds) {
+      return formatTimer(seconds);
+    }
+
+    function parseDateValue(date) {
+      if (!date) return 0;
+
+      const parts = String(date).split(".");
+
+      if (parts.length !== 3) return 0;
+
+      return new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+      ).getTime();
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    /* =====================================================
+       메뉴 / 화면
+    ===================================================== */
+
+    function toggleMenu() {
+      document.getElementById("sideMenu").classList.toggle("open");
+    }
+
+    function closeMenu() {
+      document.getElementById("sideMenu").classList.remove("open");
+    }
+
+    function hideAllPages() {
+      document.getElementById("onitPage").style.display = "none";
+      document.getElementById("timerPage").style.display = "none";
+      document.getElementById("recordsPage").style.display = "none";
+      document.getElementById("settingsPage").style.display = "none";
+    }
+
+    function showOnIt() {
+      hideAllPages();
+      document.getElementById("onitPage").style.display = "flex";
+      document.getElementById("headerTitle").textContent = "On It";
+      updateOnItStatus();
+      updateDisplay();
+      closeMenu();
+    }
+
+    function showTimer() {
+      hideAllPages();
+      document.getElementById("timerPage").style.display = "flex";
+      document.getElementById("headerTitle").textContent = "Timer";
+
+      if (
+        timerIsRunning ||
+        timerState === "paused" ||
+        timerState === "finished"
+      ) {
+        showTimerRunningScreen();
+
+        if (timerState === "paused" || timerState === "finished") {
+          updateTimerDisplayPaused();
+        }
+      } else {
+        showTimerSetupScreen();
+      }
+
+      closeMenu();
+    }
+
+    function showRecords() {
+      hideAllPages();
+      document.getElementById("recordsPage").style.display = "block";
+      document.getElementById("headerTitle").textContent = "Records";
+      renderRecords();
+      closeMenu();
+    }
+
+    function showSettings() {
+      hideAllPages();
+      document.getElementById("settingsPage").style.display = "block";
+      document.getElementById("headerTitle").textContent = "Settings";
+      renderSettings();
+      closeMenu();
+    }
+
+    /* =====================================================
+       On It
+    ===================================================== */
+
+    let isRunning = false;
+    let startTime = null;
+    let sessionSeconds = 0;
+    let totalSeconds = 0;
+    let activeDate = getToday();
+
+    function loadTodayTotal() {
+      const today = getToday();
+
+      const saved = localStorage.getItem("onItTotal_" + today);
+
+      totalSeconds =
+        saved !== null
+          ? Math.max(0, Number(saved) || 0)
+          : 0;
+
+      activeDate = today;
+    }
+
+    function checkDateChange() {
+      const today = getToday();
+
+      if (today === activeDate) return;
+
+      if (isRunning) {
+        const elapsed = getCurrentOnItElapsed();
+
+        if (elapsed > 0) {
+          const addedSeconds =
+            Math.max(0, elapsed - sessionSeconds);
+
+          totalSeconds += addedSeconds;
+
+          localStorage.setItem(
+            "onItTotal_" + activeDate,
+            totalSeconds
+          );
+        }
+
+        sessionSeconds = 0;
+        startTime = Date.now();
+      }
+
+      loadTodayTotal();
+      updateDisplay();
+    }
+
+    function getCurrentOnItElapsed() {
+      if (!isRunning || startTime === null) {
+        return sessionSeconds;
+      }
+
+      const elapsed =
+        Math.floor((Date.now() - startTime) / 1000);
+
+      return Math.max(0, elapsed);
+    }
+
+    function updateOnItStatus() {
+      const status = document.getElementById("status");
+
+      if (isRunning) {
+        status.textContent = "●";
+      } else if (sessionSeconds > 0) {
+        status.textContent = "‖";
+      } else {
+        status.textContent = "■";
+      }
+    }
+
+    function updateDisplay() {
+      checkDateChange();
+
+      const currentSession = getCurrentOnItElapsed();
+
+      document.getElementById("sessionTime").textContent =
+        formatOnIt(currentSession);
+
+      let currentTotal = totalSeconds;
+
+      if (isRunning && startTime !== null) {
+        const elapsed =
+          Math.floor((Date.now() - startTime) / 1000);
+
+        const addedSeconds =
+          Math.max(0, elapsed - sessionSeconds);
+
+        currentTotal = totalSeconds + addedSeconds;
+      }
+
+      document.getElementById("totalTime").textContent =
+        formatOnIt(currentTotal);
+    }
+
+    function startSession() {
+      checkDateChange();
+
+      if (timerIsRunning) {
+        const ok = confirm(
+          "현재 Timer가 실행 중입니다.\n\n" +
+          "Timer를 종료하고 On It을 시작할까요?"
+        );
+
+        if (!ok) return;
+
+        stopTimer();
+      }
+
+      if (!isRunning) {
+        startTime =
+          Date.now() - sessionSeconds * 1000;
+
+        isRunning = true;
+      }
+
+      updateOnItStatus();
+      updateDisplay();
+    }
+
+    function pauseSession() {
+      if (!isRunning) return;
+
+      const elapsed = getCurrentOnItElapsed();
+
+      const addedSeconds =
+        Math.max(0, elapsed - sessionSeconds);
+
+      sessionSeconds = elapsed;
+      totalSeconds += addedSeconds;
+
+      localStorage.setItem(
+        "onItTotal_" + activeDate,
+        totalSeconds
+      );
+
+      isRunning = false;
+      startTime = null;
+
+      updateOnItStatus();
+      updateDisplay();
+    }
+
+    function resumeSession() {
+      startSession();
+    }
+
+    function stopSession() {
+      checkDateChange();
+
+      if (isRunning) {
+        const elapsed = getCurrentOnItElapsed();
+
+        const addedSeconds =
+          Math.max(0, elapsed - sessionSeconds);
+
+        sessionSeconds = elapsed;
+        totalSeconds += addedSeconds;
+
+        localStorage.setItem(
+          "onItTotal_" + activeDate,
+          totalSeconds
+        );
+      }
+
+      if (sessionSeconds > 0) {
+        saveRecord(sessionSeconds, activeDate);
+      }
+
+      sessionSeconds = 0;
+      isRunning = false;
+      startTime = null;
+
+      updateOnItStatus();
+      updateDisplay();
+    }
+
+    function saveRecord(seconds, date) {
+      seconds =
+        Math.max(0, Math.floor(Number(seconds) || 0));
+
+      if (seconds <= 0) return;
+
+      const records =
+        JSON.parse(
+          localStorage.getItem("onItRecords")
+        ) || [];
+
+      records.push({
+        id: Date.now(),
+        date: date || getToday(),
+        seconds: seconds,
+        type: "onIt"
+      });
+
+      localStorage.setItem(
+        "onItRecords",
+        JSON.stringify(records)
+      );
+    }
+
+    /* =====================================================
+       Settings
+    ===================================================== */
+
+    let alertMode =
+      localStorage.getItem("onItAlertMode") || "flash";
+
+    function setAlertMode(mode) {
+      if (mode !== "flash" && mode !== "sound") return;
+
+      alertMode = mode;
+
+      localStorage.setItem(
+        "onItAlertMode",
+        alertMode
+      );
+
+      renderSettings();
+
+      if (mode === "sound") {
+        playAlertSound();
+      }
+    }
+
+    function renderSettings() {
+      const flashButton =
+        document.getElementById("flashAlertButton");
+
+      const soundButton =
+        document.getElementById("soundAlertButton");
+
+      const currentText =
+        document.getElementById("currentAlertText");
+
+      flashButton.classList.remove("selected");
+      soundButton.classList.remove("selected");
+
+      if (alertMode === "sound") {
+        soundButton.classList.add("selected");
+        currentText.textContent = "Current: Sound";
+      } else {
+        flashButton.classList.add("selected");
+        currentText.textContent =
+          "Current: Screen flashing";
+      }
+    }
+
+    function playAlertSound() {
+      try {
+        const AudioContext =
+          window.AudioContext ||
+          window.webkitAudioContext;
+
+        if (!AudioContext) return;
+
+        const audioContext = new AudioContext();
+
+        function playOneBeep(startTime) {
+          const oscillator =
+            audioContext.createOscillator();
+
+          const gain =
+            audioContext.createGain();
+
+          oscillator.type = "sine";
+
+          oscillator.frequency.setValueAtTime(
+            880,
+            startTime
+          );
+
+          oscillator.frequency.setValueAtTime(
+            660,
+            startTime + 0.15
+          );
+
+          gain.gain.setValueAtTime(
+            0.0001,
+            startTime
+          );
+
+          gain.gain.exponentialRampToValueAtTime(
+            0.25,
+            startTime + 0.02
+          );
+
+          gain.gain.exponentialRampToValueAtTime(
+            0.0001,
+            startTime + 0.3
+          );
+
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+
+          oscillator.start(startTime);
+          oscillator.stop(startTime + 0.3);
+        }
+
+        const now = audioContext.currentTime;
+
+        playOneBeep(now);
+        playOneBeep(now + 0.4);
+        playOneBeep(now + 0.8);
+
+        setTimeout(() => {
+          if (audioContext.close) {
+            audioContext.close();
+          }
+        }, 1400);
+
+      } catch (error) {
+        console.log("Sound alert unavailable.");
+      }
+    }
+
+    function triggerTimerAlert() {
+      if (alertMode === "sound") {
+        playAlertSound();
+      } else {
+        flashScreen();
+      }
+    }
+
+    /* =====================================================
+       Records
+       - 날짜별 합산
+       - CSV 내보내기
+       - On It / Timer 모두 수정 가능
+    ===================================================== */
+
+    function getAllRecords() {
+      const onItRecords =
+        JSON.parse(
+          localStorage.getItem("onItRecords")
+        ) || [];
+
+      const timerRecords =
+        JSON.parse(
+          localStorage.getItem("timerRecords")
+        ) || [];
+
+      return [...onItRecords, ...timerRecords];
+    }
+
+    function getDailySummary() {
+      const records = getAllRecords();
+      const summary = {};
+
+      records.forEach(record => {
+        if (!record.date) return;
+
+        if (!summary[record.date]) {
+          summary[record.date] = {
+            onIt: 0,
+            timer: 0,
+            total: 0
+          };
+        }
+
+        const seconds =
+          Math.max(0, Number(record.seconds) || 0);
+
+        if (record.type === "onIt") {
+          summary[record.date].onIt += seconds;
+        } else if (record.type === "timer") {
+          summary[record.date].timer += seconds;
+        }
+
+        summary[record.date].total += seconds;
+      });
+
+      return summary;
+    }
+
+    function renderDailySummary() {
+      const container =
+        document.getElementById("dailySummary");
+
+      const summary = getDailySummary();
+
+      const dates =
+        Object.keys(summary).sort(
+          (a, b) =>
+            parseDateValue(b) -
+            parseDateValue(a)
+        );
+
+      if (dates.length === 0) {
+        container.innerHTML = "";
+        return;
+      }
+
+      let html = `
+        <div class="daily-summary-title">
+          Daily total
+        </div>
+      `;
+
+      dates.forEach(date => {
+        const item = summary[date];
+
+        html += `
+          <div class="daily-summary-row">
+            <span>${escapeHtml(date)}</span>
+            <span>${formatTimer(item.total)}</span>
+          </div>
+
+          <div class="daily-summary-row">
+            <span style="color:#777;">On It / Timer</span>
+            <span style="color:#999;">
+              ${formatTimer(item.onIt)} / ${formatTimer(item.timer)}
+            </span>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderRecords() {
+      const list =
+        document.getElementById("recordsList");
+
+      const records = getAllRecords();
+
+      renderDailySummary();
+
+      if (records.length === 0) {
+        list.innerHTML =
+          '<div class="empty-records">None</div>';
+        return;
+      }
+
+      records.sort(
+        (a, b) =>
+          Number(b.id || 0) -
+          Number(a.id || 0)
+      );
+
+      const grouped = {};
+
+      records.forEach(record => {
+        if (!record.date) return;
+
+        if (!grouped[record.date]) {
+          grouped[record.date] = [];
+        }
+
+        grouped[record.date].push(record);
+      });
+
+      let html = "";
+
+      Object.keys(grouped)
+        .sort(
+          (a, b) =>
+            parseDateValue(b) -
+            parseDateValue(a)
+        )
+        .forEach(date => {
+          html += `
+            <div class="record-date">
+              ${escapeHtml(date)}
+            </div>
+          `;
+
+          grouped[date].forEach((record, index) => {
+            const isOnIt =
+              record.type === "onIt";
+
+            const duration =
+              isOnIt
+                ? formatOnIt(record.seconds)
+                : formatTimer(record.seconds);
+
+            html += `
+              <div
+                class="record-item"
+                id="record-${Number(record.id)}"
+              >
+                <div class="record-time">
+                  ${index + 1}.
+                  ${duration}
+
+                  <span class="record-type">
+                    ${isOnIt ? "On It" : "Timer"}
+                  </span>
+                </div>
+
+                <div class="record-actions">
+                  <button
+                    onclick="editRecord(
+                      ${Number(record.id)},
+                      '${isOnIt ? "onIt" : "timer"}'
+                    )"
+                  >
+                    ✎
+                  </button>
+
+                  <button
+                    onclick="deleteRecord(
+                      ${Number(record.id)},
+                      '${isOnIt ? "onIt" : "timer"}'
+                    )"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            `;
+          });
+        });
+
+      list.innerHTML = html;
+    }
+
+    function editRecord(id, type) {
+      const storageKey =
+        type === "onIt"
+          ? "onItRecords"
+          : "timerRecords";
+
+      const records =
+        JSON.parse(
+          localStorage.getItem(storageKey)
+        ) || [];
+
+      const record =
+        records.find(
+          r => Number(r.id) === Number(id)
+        );
+
+      if (!record) return;
+
+      const row =
+        document.getElementById(
+          `record-${id}`
+        );
+
+      if (!row) return;
+
+      const currentValue =
+        type === "onIt"
+          ? formatOnIt(record.seconds)
+          : formatTimer(record.seconds);
+
+      row.innerHTML = `
+        <input
+          class="edit-input"
+          id="edit-${id}"
+          value="${escapeHtml(currentValue)}"
+          inputmode="numeric"
+        >
+
+        <div class="record-actions">
+          <button
+            onclick="saveEditedRecord(
+              ${Number(id)},
+              '${type}'
+            )"
+          >
+            ✓
+          </button>
+
+          <button onclick="renderRecords()">
+            ×
+          </button>
+        </div>
+      `;
+    }
+
+    function saveEditedRecord(id, type) {
+      const input =
+        document.getElementById(`edit-${id}`);
+
+      if (!input) return;
+
+      const value = input.value.trim();
+
+      let seconds = 0;
+
+      if (type === "onIt") {
+        const parts = value.split(":");
+
+        if (parts.length !== 2) {
+          alert("On It은 H:MM 형식으로 입력해주세요.");
+          return;
+        }
+
+        const hours = Number(parts[0]);
+        const minutes = Number(parts[1]);
+
+        if (
+          !Number.isInteger(hours) ||
+          !Number.isInteger(minutes) ||
+          hours < 0 ||
+          minutes < 0 ||
+          minutes > 59
+        ) {
+          alert("시간을 다시 입력해주세요.");
+          return;
+        }
+
+        seconds =
+          hours * 3600 +
+          minutes * 60;
+
+      } else {
+        const parts = value.split(":");
+
+        if (parts.length !== 3) {
+          alert("Timer는 HH:MM:SS 형식으로 입력해주세요.");
+          return;
+        }
+
+        const hours = Number(parts[0]);
+        const minutes = Number(parts[1]);
+        const secs = Number(parts[2]);
+
+        if (
+          !Number.isInteger(hours) ||
+          !Number.isInteger(minutes) ||
+          !Number.isInteger(secs) ||
+          hours < 0 ||
+          minutes < 0 ||
+          minutes > 59 ||
+          secs < 0 ||
+          secs > 59
+        ) {
+          alert("시간을 다시 입력해주세요.");
+          return;
+        }
+
+        seconds =
+          hours * 3600 +
+          minutes * 60 +
+          secs;
+      }
+
+      if (seconds <= 0) {
+        alert("0보다 큰 시간을 입력해주세요.");
+        return;
+      }
+
+      const storageKey =
+        type === "onIt"
+          ? "onItRecords"
+          : "timerRecords";
+
+      const records =
+        JSON.parse(
+          localStorage.getItem(storageKey)
+        ) || [];
+
+      const record =
+        records.find(
+          r => Number(r.id) === Number(id)
+        );
+
+      if (!record) return;
+
+      const oldDate = record.date;
+
+      record.seconds = seconds;
+
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify(records)
+      );
+
+      if (type === "onIt") {
+        recalculateTotal(oldDate);
+      }
+
+      renderRecords();
+    }
+
+    function deleteRecord(id, type) {
+      const ok =
+        confirm("이 기록을 삭제할까요?");
+
+      if (!ok) return;
+
+      const storageKey =
+        type === "onIt"
+          ? "onItRecords"
+          : "timerRecords";
+
+      let records =
+        JSON.parse(
+          localStorage.getItem(storageKey)
+        ) || [];
+
+      const record =
+        records.find(
+          r => Number(r.id) === Number(id)
+        );
+
+      records =
+        records.filter(
+          r => Number(r.id) !== Number(id)
+        );
+
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify(records)
+      );
+
+      if (type === "onIt" && record) {
+        recalculateTotal(record.date);
+      }
+
+      renderRecords();
+    }
+
+    function recalculateTotal(date) {
+      if (!date) return;
+
+      const records =
+        JSON.parse(
+          localStorage.getItem("onItRecords")
+        ) || [];
+
+      const total =
+        records
+          .filter(
+            r =>
+              r.date === date &&
+              r.type === "onIt"
+          )
+          .reduce(
+            (sum, r) =>
+              sum +
+              Math.max(
+                0,
+                Number(r.seconds) || 0
+              ),
+            0
+          );
+
+      localStorage.setItem(
+        "onItTotal_" + date,
+        total
+      );
+
+      if (date === getToday()) {
+        totalSeconds = total;
+        updateDisplay();
+      }
+    }
+
+    /* =====================================================
+       CSV
+       모든 개별 기록 + 날짜별 합산을 한 파일에 저장
+    ===================================================== */
+
+    function csvEscape(value) {
+      const text = String(value ?? "");
+
+      if (
+        text.includes(",") ||
+        text.includes('"') ||
+        text.includes("\n")
+      ) {
+        return '"' +
+          text.replaceAll('"', '""') +
+          '"';
+      }
+
+      return text;
+    }
+
+    function exportRecordsCSV() {
+
+      const records =
+        getAllRecords();
+
+
+      if (records.length === 0) {
+
+        alert("내보낼 기록이 없습니다.");
+
+        return;
+
+      }
+
+
+      /*
+        CSV에는 개별 기록을 전부 넣지 않고
+        날짜별 합산만 넣는다.
+
+        Excel에서 바로 일별 정리할 수 있도록
+        날짜 / On It / Timer / Total 구조로 만든다.
+      */
+
+      const grouped = {};
+
+
+      records.forEach(
+        record => {
+
+          if (!record.date) {
+
+            return;
+
+          }
+
+
+          if (!grouped[record.date]) {
+
+            grouped[record.date] = {
+              onIt: 0,
+              timer: 0
+            };
+
+          }
+
+
+          const seconds =
+            Math.max(
+              0,
+              Number(record.seconds) || 0
+            );
+
+
+          if (record.type === "onIt") {
+
+            grouped[record.date].onIt +=
+              seconds;
+
+          }
+
+          else if (record.type === "timer") {
+
+            grouped[record.date].timer +=
+              seconds;
+
+          }
+
+        }
+      );
+
+
+      const dates =
+        Object.keys(grouped)
+          .sort(
+            (a, b) =>
+              parseDateValue(a) -
+              parseDateValue(b)
+          );
+
+
+      const rows = [
+        [
+          "Date",
+          "On It",
+          "Timer",
+          "Total"
+        ]
+      ];
+
+
+      dates.forEach(
+        date => {
+
+          const onIt =
+            grouped[date].onIt;
+
+
+          const timer =
+            grouped[date].timer;
+
+
+          const total =
+            onIt + timer;
+
+
+          rows.push([
+            date,
+            formatOnIt(onIt),
+            formatTimer(timer),
+            formatTimer(total)
+          ]);
+
+        }
+      );
+
+
+      const csv =
+        "\uFEFF" +
+        rows
+          .map(
+            row =>
+              row
+                .map(
+                  value =>
+                    `"${String(value)
+                      .replaceAll('"', '""')}"`
+                )
+                .join(",")
+          )
+          .join("\r\n");
+
+
+      const blob =
+        new Blob(
+          [csv],
+          {
+            type:
+              "text/csv;charset=utf-8;"
+          }
+        );
+
+
+      const url =
+        URL.createObjectURL(blob);
+
+
+      const link =
+        document.createElement("a");
+
+
+      link.href =
+        url;
+
+
+      link.download =
+        "On_It_daily_records.csv";
+
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+
+    }
+
+    function checkTimerInputs() {
+      const ids = [
+        "timerInput1",
+        "timerInput2",
+        "timerInput3"
+      ];
+
+      const values =
+        ids.map(
+          id =>
+            sanitizeTimerInput(
+              document.getElementById(id)
+            )
+        );
+
+      const button =
+        document.getElementById(
+          "timerStartButton"
+        );
+
+      if (!button) return;
+
+      button.disabled =
+        values.every(
+          value => value === 0
+        );
+    }
+
+    function sanitizeTimerInput(input) {
+      if (!input) return 0;
+
+      let value = Number(input.value);
+
+      if (!Number.isFinite(value) || value < 0) {
+        value = 0;
+      }
+
+      value = Math.floor(value);
+
+      input.value = value;
+
+      return value;
+    }
+
+    /* =====================================================
+       Timer 상태
+       - 이 선언들이 누락되면 Timer 화면 진입 순간
+         ReferenceError가 발생하여 메뉴도 닫히지 않는다.
+    ===================================================== */
+
+    let timerSegments = [];
+    let timerCurrentSegment = 0;
+    let timerElapsedSeconds = 0;
+    let timerTotalSeconds = 0;
+    let timerStartTime = null;
+    let timerIsRunning = false;
+    let timerState = "setup";
+    let timerAlertedSegments = new Set();
+    let timerFinishAlerted = false;
+
+    function startTimer() {
+      if (timerIsRunning) return;
+
+      if (isRunning) {
+        const ok =
+          confirm(
+            "현재 On It이 실행 중입니다.\n\n" +
+            "On It을 종료하고 Timer를 시작할까요?"
+          );
+
+        if (!ok) return;
+
+        stopSession();
+      }
+
+      const input1 =
+        sanitizeTimerInput(
+          document.getElementById("timerInput1")
+        );
+
+      const input2 =
+        sanitizeTimerInput(
+          document.getElementById("timerInput2")
+        );
+
+      const input3 =
+        sanitizeTimerInput(
+          document.getElementById("timerInput3")
+        );
+
+      timerSegments = [
+        input1 * 60,
+        input2 * 60,
+        input3 * 60
+      ].filter(seconds => seconds > 0);
+
+      if (timerSegments.length === 0) return;
+
+      timerCurrentSegment = 0;
+      timerElapsedSeconds = 0;
+
+      timerTotalSeconds =
+        timerSegments.reduce(
+          (sum, seconds) =>
+            sum + seconds,
+          0
+        );
+
+      timerStartTime = Date.now();
+      timerIsRunning = true;
+      timerState = "running";
+
+      timerAlertedSegments = new Set();
+      timerFinishAlerted = false;
+
+      showTimerRunningScreen();
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      if (
+        !timerIsRunning ||
+        timerStartTime === null
+      ) {
+        return;
+      }
+
+      const elapsed =
+        Math.floor(
+          (Date.now() - timerStartTime) / 1000
+        );
+
+      const previousElapsed =
+        timerElapsedSeconds;
+
+      timerElapsedSeconds =
+        Math.min(
+          elapsed,
+          timerTotalSeconds
+        );
+
+      let cumulative = 0;
+
+      for (
+        let i = 0;
+        i < timerSegments.length;
+        i++
+      ) {
+        cumulative += timerSegments[i];
+
+        if (
+          previousElapsed < cumulative &&
+          timerElapsedSeconds >= cumulative &&
+          !timerAlertedSegments.has(i)
+        ) {
+          timerAlertedSegments.add(i);
+
+          if (
+            cumulative < timerTotalSeconds
+          ) {
+            triggerTimerAlert();
+          }
+        }
+      }
+
+      if (
+        timerElapsedSeconds >=
+        timerTotalSeconds
+      ) {
+        timerElapsedSeconds =
+          timerTotalSeconds;
+
+        finishTimer();
+        return;
+      }
+
+      let accumulated = 0;
+      let currentSegment = 0;
+
+      for (
+        let i = 0;
+        i < timerSegments.length;
+        i++
+      ) {
+        accumulated += timerSegments[i];
+
+        if (
+          timerElapsedSeconds <
+          accumulated
+        ) {
+          currentSegment = i;
+          break;
+        }
+      }
+
+      timerCurrentSegment = currentSegment;
+
+      const segmentStart =
+        timerSegments
+          .slice(0, currentSegment)
+          .reduce(
+            (sum, value) =>
+              sum + value,
+            0
+          );
+
+      const segmentElapsed =
+        timerElapsedSeconds -
+        segmentStart;
+
+      const segmentRemaining =
+        timerSegments[currentSegment] -
+        segmentElapsed;
+
+      const remainingElement =
+        document.getElementById(
+          "timerRemaining"
+        );
+
+      const progressElement =
+        document.getElementById(
+          "timerProgress"
+        );
+
+      const totalElement =
+        document.getElementById(
+          "timerTotal"
+        );
+
+      if (remainingElement) {
+        remainingElement.textContent =
+          formatTimer(segmentRemaining);
+      }
+
+      if (progressElement) {
+        progressElement.textContent =
+          `${currentSegment + 1} / ${timerSegments.length}`;
+      }
+
+      if (totalElement) {
+        totalElement.textContent =
+          `Total ${formatTimer(timerElapsedSeconds)}`;
+      }
+    }
+
+    function showTimerRunningScreen() {
+      const timerPage =
+        document.getElementById("timerPage");
+
+      timerPage.innerHTML = `
+        <div
+          class="timer-status"
+          id="timerStatus"
+        >
+          ●
+        </div>
+
+        <div
+          class="timer-remaining"
+          id="timerRemaining"
+        >
+          00:00:00
+        </div>
+
+        <div
+          class="timer-progress"
+          id="timerProgress"
+        >
+          1 / 1
+        </div>
+
+        <div
+          class="timer-total"
+          id="timerTotal"
+        >
+          Total 00:00:00
+        </div>
+
+        <div class="controls">
+          <button
+            class="control-button"
+            id="timerPauseButton"
+            onclick="pauseTimer()"
+          >
+            Ⅱ
+          </button>
+
+          <button
+            class="control-button"
+            onclick="stopTimer()"
+          >
+            ■
+          </button>
+        </div>
+      `;
+
+      document.getElementById(
+        "headerTitle"
+      ).textContent = "Timer";
+
+      if (timerState === "paused") {
+        document.getElementById(
+          "timerStatus"
+        ).textContent = "‖";
+
+        document.getElementById(
+          "timerPauseButton"
+        ).textContent = "▶";
+
+        document.getElementById(
+          "timerPauseButton"
+        ).setAttribute(
+          "onclick",
+          "resumeTimer()"
+        );
+      }
+
+      if (timerState === "finished") {
+        document.getElementById(
+          "timerStatus"
+        ).textContent = "■";
+
+        const button =
+          document.getElementById(
+            "timerPauseButton"
+          );
+
+        if (button) {
+          button.style.display = "none";
+        }
+      }
+    }
+
+    function pauseTimer() {
+      if (!timerIsRunning) return;
+
+      timerElapsedSeconds =
+        Math.floor(
+          (Date.now() - timerStartTime) / 1000
+        );
+
+      timerElapsedSeconds =
+        Math.min(
+          timerElapsedSeconds,
+          timerTotalSeconds
+        );
+
+      timerIsRunning = false;
+      timerState = "paused";
+
+      const status =
+        document.getElementById(
+          "timerStatus"
+        );
+
+      const button =
+        document.getElementById(
+          "timerPauseButton"
+        );
+
+      if (status) status.textContent = "‖";
+
+      if (button) {
+        button.textContent = "▶";
+        button.setAttribute(
+          "onclick",
+          "resumeTimer()"
+        );
+      }
+
+      updateTimerDisplayPaused();
+    }
+
+    function updateTimerDisplayPaused() {
+      let accumulated = 0;
+
+      for (
+        let i = 0;
+        i < timerSegments.length;
+        i++
+      ) {
+        const segmentLength =
+          timerSegments[i];
+
+        if (
+          timerElapsedSeconds <
+          accumulated + segmentLength
+        ) {
+          timerCurrentSegment = i;
+
+          const segmentElapsed =
+            timerElapsedSeconds -
+            accumulated;
+
+          const remaining =
+            segmentLength -
+            segmentElapsed;
+
+          const remainingElement =
+            document.getElementById(
+              "timerRemaining"
+            );
+
+          const progressElement =
+            document.getElementById(
+              "timerProgress"
+            );
+
+          const totalElement =
+            document.getElementById(
+              "timerTotal"
+            );
+
+          if (remainingElement) {
+            remainingElement.textContent =
+              formatTimer(remaining);
+          }
+
+          if (progressElement) {
+            progressElement.textContent =
+              `${i + 1} / ${timerSegments.length}`;
+          }
+
+          if (totalElement) {
+            totalElement.textContent =
+              `Total ${formatTimer(timerElapsedSeconds)}`;
+          }
+
+          return;
+        }
+
+        accumulated += segmentLength;
+      }
+
+      if (timerTotalSeconds > 0) {
+        const remainingElement =
+          document.getElementById(
+            "timerRemaining"
+          );
+
+        const progressElement =
+          document.getElementById(
+            "timerProgress"
+          );
+
+        const totalElement =
+          document.getElementById(
+            "timerTotal"
+          );
+
+        if (remainingElement) {
+          remainingElement.textContent =
+            "00:00:00";
+        }
+
+        if (progressElement) {
+          progressElement.textContent =
+            `${timerSegments.length} / ${timerSegments.length}`;
+        }
+
+        if (totalElement) {
+          totalElement.textContent =
+            `Total ${formatTimer(timerElapsedSeconds)}`;
+        }
+      }
+    }
+
+    function resumeTimer() {
+      if (
+        timerIsRunning ||
+        timerState !== "paused"
+      ) {
+        return;
+      }
+
+      timerStartTime =
+        Date.now() -
+        timerElapsedSeconds * 1000;
+
+      timerIsRunning = true;
+      timerState = "running";
+
+      const status =
+        document.getElementById(
+          "timerStatus"
+        );
+
+      const button =
+        document.getElementById(
+          "timerPauseButton"
+        );
+
+      if (status) status.textContent = "●";
+
+      if (button) {
+        button.textContent = "Ⅱ";
+        button.setAttribute(
+          "onclick",
+          "pauseTimer()"
+        );
+      }
+    }
+
+    function stopTimer() {
+      if (timerIsRunning) {
+        timerElapsedSeconds =
+          Math.floor(
+            (Date.now() - timerStartTime) / 1000
+          );
+      }
+
+      timerElapsedSeconds =
+        Math.min(
+          timerElapsedSeconds,
+          timerTotalSeconds
+        );
+
+      timerIsRunning = false;
+
+      const completedSeconds =
+        Math.min(
+          timerElapsedSeconds,
+          timerTotalSeconds
+        );
+
+      if (completedSeconds > 0) {
+        saveTimerRecord(completedSeconds);
+      }
+
+      resetTimerState();
+      showTimerSetupScreen();
+    }
+
+    function finishTimer() {
+      if (timerFinishAlerted) return;
+
+      timerFinishAlerted = true;
+      timerIsRunning = false;
+      timerElapsedSeconds = timerTotalSeconds;
+      timerState = "finished";
+
+      const remainingElement =
+        document.getElementById(
+          "timerRemaining"
+        );
+
+      const progressElement =
+        document.getElementById(
+          "timerProgress"
+        );
+
+      const totalElement =
+        document.getElementById(
+          "timerTotal"
+        );
+
+      if (remainingElement) {
+        remainingElement.textContent =
+          "00:00:00";
+      }
+
+      if (progressElement) {
+        progressElement.textContent =
+          `${timerSegments.length} / ${timerSegments.length}`;
+      }
+
+      if (totalElement) {
+        totalElement.textContent =
+          `Total ${formatTimer(timerTotalSeconds)}`;
+      }
+
+      saveTimerRecord(timerTotalSeconds);
+
+      triggerTimerAlert();
+
+      setTimeout(() => {
+        alert("Timer 완료!");
+
+        resetTimerState();
+        showTimerSetupScreen();
+      }, 700);
+    }
+
+    function resetTimerState() {
+      timerSegments = [];
+      timerCurrentSegment = 0;
+      timerElapsedSeconds = 0;
+      timerTotalSeconds = 0;
+      timerStartTime = null;
+      timerIsRunning = false;
+      timerState = "setup";
+      timerAlertedSegments = new Set();
+      timerFinishAlerted = false;
+    }
+
+    function flashScreen() {
+      let count = 0;
+
+      const flash =
+        setInterval(() => {
+          document.body.classList.toggle(
+            "timer-flash"
+          );
+
+          count++;
+
+          if (count >= 6) {
+            clearInterval(flash);
+
+            document.body.classList.remove(
+              "timer-flash"
+            );
+          }
+        }, 150);
+    }
+
+    function showTimerSetupScreen() {
+      const timerPage =
+        document.getElementById("timerPage");
+
+      timerPage.innerHTML = `
+        <div class="timer-inputs">
+          <input
+            class="timer-input"
+            id="timerInput1"
+            type="number"
+            min="0"
+            step="1"
+            value="5"
+            oninput="checkTimerInputs()"
+          >
+
+          <input
+            class="timer-input"
+            id="timerInput2"
+            type="number"
+            min="0"
+            step="1"
+            value="10"
+            oninput="checkTimerInputs()"
+          >
+
+          <input
+            class="timer-input"
+            id="timerInput3"
+            type="number"
+            min="0"
+            step="1"
+            value="15"
+            oninput="checkTimerInputs()"
+          >
+        </div>
+
+        <button
+          class="timer-start-button"
+          id="timerStartButton"
+          onclick="startTimer()"
+        >
+          ▶
+        </button>
+      `;
+
+      document.getElementById(
+        "headerTitle"
+      ).textContent = "Timer";
+
+      checkTimerInputs();
+    }
+
+    function saveTimerRecord(seconds) {
+      seconds =
+        Math.max(
+          0,
+          Math.floor(Number(seconds) || 0)
+        );
+
+      if (seconds <= 0) return;
+
+      const records =
+        JSON.parse(
+          localStorage.getItem("timerRecords")
+        ) || [];
+
+      records.push({
+        id: Date.now(),
+        date: getToday(),
+        seconds: seconds,
+        type: "timer"
+      });
+
+      localStorage.setItem(
+        "timerRecords",
+        JSON.stringify(records)
+      );
+    }
+
+    /* =====================================================
+       새로고침 / 창 종료 시 진행 중 기록 저장
+    ===================================================== */
+
+    let closingSaved = false;
+
+    window.addEventListener(
+      "beforeunload",
+      function () {
+        if (closingSaved) return;
+
+        if (isRunning) {
+          const elapsed =
+            getCurrentOnItElapsed();
+
+          if (elapsed > 0) {
+            saveRecord(
+              elapsed,
+              activeDate
+            );
+          }
+
+          const addedSeconds =
+            Math.max(
+              0,
+              elapsed - sessionSeconds
+            );
+
+          const finalTotal =
+            totalSeconds + addedSeconds;
+
+          localStorage.setItem(
+            "onItTotal_" + activeDate,
+            finalTotal
+          );
+
+          closingSaved = true;
+          return;
+        }
+
+        if (timerIsRunning) {
+          const elapsed =
+            Math.floor(
+              (Date.now() - timerStartTime) / 1000
+            );
+
+          const completedSeconds =
+            Math.min(
+              elapsed,
+              timerTotalSeconds
+            );
+
+          if (completedSeconds > 0) {
+            saveTimerRecord(
+              completedSeconds
+            );
+          }
+
+          closingSaved = true;
+        }
+      }
+    );
+
+    /* =====================================================
+       초기화
+    ===================================================== */
+
+    loadTodayTotal();
+    updateOnItStatus();
+    updateDisplay();
+    showTimerSetupScreen();
+    renderSettings();
+
+    setInterval(() => {
+      checkDateChange();
+      updateDisplay();
+    }, 1000);
+
+    setInterval(() => {
+      updateTimerDisplay();
+    }, 250);
+  </script>
+
+</body>
+</html>
