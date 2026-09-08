@@ -1763,18 +1763,30 @@
       if (!item) return;
 
       const currentMinutes = Math.round(item.seconds / 60);
+      const timeInput = prompt("수정할 시간(분 단위 숫자)을 입력하세요:", currentMinutes);
+      if (timeInput === null) return;
 
-      const input = prompt("수정할 시간(분 단위 숫자)을 입력하세요:", currentMinutes);
-      if (input === null) return;
-
-      const parsedMinutes = parseInt(input.trim(), 10);
-
+      const parsedMinutes = parseInt(timeInput.trim(), 10);
       if (isNaN(parsedMinutes) || parsedMinutes < 0) {
         alert("올바른 분(숫자)을 입력해주세요.");
         return;
       }
 
+      const activeTags = getCustomTags();
+      const tagInput = prompt(
+        `수정할 태그 이름을 입력하세요.\n(현재 태그: ${item.type})\n[사용 가능 태그: ${activeTags.join(", ")}]`, 
+        item.type
+      );
+      if (tagInput === null) return;
+
+      const trimmedTag = tagInput.trim();
+      if (!trimmedTag) {
+        alert("태그는 비워둘 수 없습니다.");
+        return;
+      }
+
       item.seconds = parsedMinutes * 60;
+      item.type = trimmedTag;
       localStorage.setItem("onItRecords", JSON.stringify(records));
 
       renderRecords();
