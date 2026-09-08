@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>On It</title>
   
-  <!-- PWA 설정을 위한 메타 태그 -->
   <meta name="theme-color" content="#111111">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="On It">
 
-  <!-- Dynamic Web App Manifest -->
   <link rel="manifest" id="manifestLink">
 
   <style>
@@ -103,7 +101,6 @@
 
     .header-title { display: none; }
 
-    /* 사이드바 메뉴 */
     .side-menu {
       position: fixed;
       top: 0;
@@ -148,7 +145,47 @@
 
     .side-menu button.menu-item:hover { background: #252525; }
 
-    /* 컨트롤 버튼 디자인 */
+    .tag-selector-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 360px;
+      transition: opacity 0.2s ease;
+    }
+
+    .tag-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .tag-chip {
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      color: #bbb;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tag-chip:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .tag-chip.selected {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: #fff;
+      color: #fff;
+      font-weight: 600;
+    }
+
     .controls {
       display: flex;
       gap: 20px;
@@ -216,15 +253,14 @@
     .total-time {
       font-size: 32px;
       font-weight: 300;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
-    /* 타이머 설정 화면 */
     .timer-inputs-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
     .timer-inputs {
@@ -248,13 +284,12 @@
 
     .timer-input:focus { border-color: #666; }
 
-    /* 타이머 프리셋 스타일 */
     .preset-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       width: 100%;
       max-width: 320px;
     }
@@ -330,13 +365,12 @@
     .timer-phase-info {
       font-size: 22px;
       color: #aaa;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       font-weight: 300;
     }
 
     .text-flash { opacity: 0.1 !important; }
 
-    /* Records 페이지 */
     .records-page {
       min-height: 100vh;
       padding: 80px 24px 40px;
@@ -376,12 +410,11 @@
 
     #csvFileInput { display: none; }
 
-    /* 통계 요약 카드 */
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
     }
 
     .summary-card {
@@ -404,7 +437,146 @@
       color: #fff;
     }
 
-    .records-list { margin-top: 20px; }
+    .ratio-stats-box {
+      background: #181818;
+      border: 1px solid #292929;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 15px;
+    }
+
+    .ratio-stats-box details summary {
+      font-size: 15px;
+      color: #aaa;
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+    }
+
+    .ratio-stats-box details summary:hover {
+      color: #fff;
+    }
+
+    .ratio-stats-content {
+      margin-top: 14px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .ratio-item {
+      margin-bottom: 10px;
+    }
+
+    .ratio-item:last-child { margin-bottom: 0; }
+
+    .ratio-info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #ccc;
+    }
+
+    .ratio-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: #252525;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .ratio-bar-fill {
+      height: 100%;
+      background: #888;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .tag-manage-box {
+      background: #181818;
+      border: 1px solid #292929;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 15px;
+    }
+
+    .tag-manage-title {
+      font-size: 15px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .tag-manage-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag-manage-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: #252525;
+      border: 1px solid #333;
+      border-radius: 14px;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .tag-manage-item span.del {
+      color: #888;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .tag-manage-item span.del:hover { color: #ff6b6b; }
+
+    .tag-add-input-group {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tag-add-input-group input {
+      flex: 1;
+      padding: 6px 10px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .tag-add-input-group button {
+      padding: 6px 12px;
+      background: #333;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .tag-add-input-group button:hover { background: #444; }
+
+    .tag-filter-wrapper {
+      margin-bottom: 15px;
+    }
+
+    .tag-filter-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: #181818;
+      border: 1px solid #292929;
+      color: #fff;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+      max-height: 200px;
+    }
+
+    .records-list { margin-top: 10px; }
 
     .record-date {
       font-size: 18px;
@@ -427,8 +599,11 @@
     .record-time { font-size: 20px; }
 
     .record-type {
-      color: #666;
-      font-size: 14px;
+      color: #888;
+      font-size: 13px;
+      background: #222;
+      padding: 2px 8px;
+      border-radius: 6px;
       margin-left: 8px;
     }
 
@@ -455,7 +630,6 @@
       text-align: center;
     }
 
-    /* Settings 페이지 */
     .settings-page {
       min-height: 100vh;
       padding: 80px 24px 40px;
@@ -558,7 +732,6 @@
     <div class="header-title" id="headerTitle">On It</div>
   </header>
 
-  <!-- 사이드바 -->
   <nav class="side-menu" id="sideMenu">
     <button class="menu-close-btn" onclick="closeMenu()">✕</button>
     <button class="menu-item" onclick="showOnIt()">On It</button>
@@ -567,9 +740,13 @@
     <button class="menu-item" onclick="showSettings()">Settings</button>
   </nav>
 
-  <!-- On It 페이지 -->
   <main class="onit-page" id="onitPage">
     <div class="status background-readable" id="status">■</div>
+    
+    <div class="tag-selector-wrapper background-readable" id="onitTagWrapper">
+      <div class="tag-chips" id="onitTagChips"></div>
+    </div>
+
     <div class="session-time background-readable" id="sessionTime">0:00</div>
     <div class="total-label background-readable">Total</div>
     <div class="total-time background-readable" id="totalTime">0:00</div>
@@ -581,11 +758,18 @@
     </div>
   </main>
 
-  <!-- Timer 페이지 -->
   <section class="timer-page" id="timerPage" style="display: none;"></section>
 
-  <!-- Records 페이지 -->
   <section class="records-page" id="recordsPage" style="display: none;">
+    <div class="tag-manage-box">
+      <div class="tag-manage-title">작업 태그 관리</div>
+      <div class="tag-manage-list" id="tagManageList"></div>
+      <div class="tag-add-input-group">
+        <input type="text" id="newTagNameInput" placeholder="새 태그(작품명) 입력...">
+        <button onclick="addNewTag()">추가</button>
+      </div>
+    </div>
+
     <div class="records-toolbar">
       <button onclick="triggerImportCSV()">CSV 불러오기</button>
       <button onclick="exportRecordsCSV()">CSV 내보내기</button>
@@ -593,7 +777,6 @@
     </div>
     <input type="file" id="csvFileInput" accept=".csv" onchange="importRecordsCSV(this)">
 
-    <!-- 오늘 / 주간 / 월간 요약 카드 -->
     <div class="summary-grid">
       <div class="summary-card">
         <div class="summary-card-label">Today</div>
@@ -609,10 +792,22 @@
       </div>
     </div>
 
+    <div class="ratio-stats-box">
+      <details>
+        <summary>태그별 누적 시간 및 비율 (클릭하여 펼치기)</summary>
+        <div class="ratio-stats-content" id="ratioStatsList"></div>
+      </details>
+    </div>
+
+    <div class="tag-filter-wrapper">
+      <select id="recordTagFilter" class="tag-filter-select" onchange="renderRecords()">
+        <option value="ALL">모든 태그 (전체 보기)</option>
+      </select>
+    </div>
+
     <div class="records-list" id="recordsList"></div>
   </section>
 
-  <!-- Settings 페이지 -->
   <section class="settings-page" id="settingsPage" style="display: none;">
     <div class="settings-section">
       <div class="settings-title">Alert</div>
@@ -647,9 +842,6 @@
   </section>
 
   <script>
-    /* =====================================================
-       PWA 설정 & 서비스 워커 등록
-    ===================================================== */
     function initPWA() {
       const manifestData = {
         name: "On It",
@@ -670,7 +862,7 @@
 
       if ("serviceWorker" in navigator) {
         const swCode = `
-          const CACHE_NAME = 'onit-v27-cache';
+          const CACHE_NAME = 'onit-v31-cache';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(clients.claim()));
           self.addEventListener('fetch', e => {
@@ -685,9 +877,85 @@
       }
     }
 
-    /* =====================================================
-       공통 유틸리티
-    ===================================================== */
+    const DEFAULT_TAGS = ["On It", "웹소설 집필", "AI 프롬프트", "스토리보드 기획", "영상 편집"];
+    let activeTag = localStorage.getItem("onItActiveTag") || "On It";
+
+    function getCustomTags() {
+      return JSON.parse(localStorage.getItem("onItCustomTags")) || DEFAULT_TAGS;
+    }
+
+    function saveCustomTags(tags) {
+      localStorage.setItem("onItCustomTags", JSON.stringify(tags));
+    }
+
+    function renderTagChips() {
+      const container = document.getElementById("onitTagChips");
+      if (!container) return;
+      const tags = getCustomTags();
+
+      container.innerHTML = tags.map(t => `
+        <button class="tag-chip ${activeTag === t ? 'selected' : ''}" onclick="selectActiveTag('${t}')">${t}</button>
+      `).join("");
+    }
+
+    function selectActiveTag(tag) {
+      activeTag = tag;
+      localStorage.setItem("onItActiveTag", activeTag);
+      renderTagChips();
+      renderTimerTagChips();
+    }
+
+    function renderTagManagerUI() {
+      const list = document.getElementById("tagManageList");
+      if (!list) return;
+      const tags = getCustomTags();
+
+      list.innerHTML = tags.map(t => `
+        <div class="tag-manage-item">
+          ${t}
+          ${tags.length > 1 ? `<span class="del" onclick="deleteTag('${t}')">✕</span>` : ''}
+        </div>
+      `).join("");
+    }
+
+    function addNewTag() {
+      const input = document.getElementById("newTagNameInput");
+      const val = input.value.trim();
+      if (!val) return;
+
+      let tags = getCustomTags();
+      if (tags.includes(val)) {
+        alert("이미 존재하는 태그입니다.");
+        return;
+      }
+
+      tags.push(val);
+      saveCustomTags(tags);
+      input.value = "";
+      renderTagManagerUI();
+      renderTagChips();
+      renderTimerTagChips();
+    }
+
+    function deleteTag(tag) {
+      let tags = getCustomTags();
+      if (tags.length <= 1) {
+        alert("최소 하나의 태그는 유지되어야 합니다.");
+        return;
+      }
+
+      tags = tags.filter(t => t !== tag);
+      saveCustomTags(tags);
+
+      if (activeTag === tag) {
+        activeTag = tags[0];
+        localStorage.setItem("onItActiveTag", activeTag);
+      }
+
+      renderTagManagerUI();
+      renderTagChips();
+      renderTimerTagChips();
+    }
 
     function getToday() {
       const now = new Date();
@@ -735,14 +1003,9 @@
       );
     }
 
-    /* =====================================================
-       Background (IndexedDB 배경 이미지 관리)
-    ===================================================== */
-
     const BACKGROUND_DB_NAME = "OnItBackgroundDB";
     const BACKGROUND_STORE_NAME = "background";
     const BACKGROUND_KEY = "current";
-
     let currentBackgroundUrl = null;
 
     function openBackgroundDB() {
@@ -847,10 +1110,6 @@
       }
     }
 
-    /* =====================================================
-       메뉴 및 화면 전환
-    ===================================================== */
-
     function toggleMenu() {
       document.getElementById("sideMenu").classList.toggle("open");
     }
@@ -871,6 +1130,7 @@
       document.getElementById("onitPage").style.display = "flex";
       document.getElementById("headerTitle").textContent = "On It";
 
+      renderTagChips();
       updateOnItStatus();
       updateDisplay();
       applyBackgroundToCurrentPage();
@@ -896,6 +1156,7 @@
       hideAllPages();
       document.getElementById("recordsPage").style.display = "block";
       document.getElementById("headerTitle").textContent = "Records";
+      renderTagManagerUI();
       renderRecords();
       closeMenu();
     }
@@ -907,10 +1168,6 @@
       renderSettings();
       closeMenu();
     }
-
-    /* =====================================================
-       On It (스톱워치) 로직
-    ===================================================== */
 
     let isRunning = false;
     let startTime = null;
@@ -932,16 +1189,20 @@
     function updateOnItStatus() {
       const status = document.getElementById("status");
       const playBtn = document.getElementById("onitPlayBtn");
+      const tagWrapper = document.getElementById("onitTagWrapper");
 
       if (isRunning) {
         status.textContent = "▶";
         if (playBtn) playBtn.classList.add("active-play");
+        if (tagWrapper) tagWrapper.style.display = "none";
       } else if (sessionSeconds > 0) {
         status.textContent = "Ⅱ";
         if (playBtn) playBtn.classList.remove("active-play");
+        if (tagWrapper) tagWrapper.style.display = "none";
       } else {
         status.textContent = "■";
         if (playBtn) playBtn.classList.remove("active-play");
+        if (tagWrapper) tagWrapper.style.display = "flex";
       }
     }
 
@@ -992,7 +1253,7 @@
       }
 
       if (sessionSeconds > 0) {
-        saveRecord(sessionSeconds, getToday(), "On It");
+        saveRecord(sessionSeconds, getToday(), activeTag);
       }
 
       sessionSeconds = 0;
@@ -1002,10 +1263,6 @@
       updateOnItStatus();
       updateDisplay();
     }
-
-    /* =====================================================
-       Timer 로직 & 프리셋 지원
-    ===================================================== */
 
     let timerIsRunning = false;
     let timerState = "idle";
@@ -1071,9 +1328,20 @@
       showTimerSetupScreen();
     }
 
+    function renderTimerTagChips() {
+      const container = document.getElementById("timerTagChips");
+      if (!container) return;
+      const tags = getCustomTags();
+
+      container.innerHTML = tags.map(t => `
+        <button class="tag-chip ${activeTag === t ? 'selected' : ''}" onclick="selectActiveTag('${t}'); renderTimerTagChips();">${t}</button>
+      `).join("");
+    }
+
     function showTimerSetupScreen() {
       const page = document.getElementById("timerPage");
       const presets = getCustomPresets();
+      const tags = getCustomTags();
 
       let presetButtonsHtml = presets.map(p => `
         <button class="preset-btn" onclick="applyPreset(${p.values[0]}, ${p.values[1]}, ${p.values[2]})">
@@ -1082,7 +1350,17 @@
         </button>
       `).join("");
 
+      let tagChipsHtml = tags.map(t => `
+        <button class="tag-chip ${activeTag === t ? 'selected' : ''}" onclick="selectActiveTag('${t}'); renderTimerTagChips();">${t}</button>
+      `).join("");
+
       page.innerHTML = `
+        <div class="tag-selector-wrapper background-readable" style="margin-bottom:15px;">
+          <div class="tag-chips" id="timerTagChips">
+            ${tagChipsHtml}
+          </div>
+        </div>
+
         <div class="timer-inputs-wrapper">
           <div class="timer-inputs">
             <input type="number" id="tMin1" class="timer-input" value="5" min="0">
@@ -1212,7 +1490,7 @@
       }
 
       if (actualElapsed > 0) {
-        saveRecord(actualElapsed, getToday(), "Timer");
+        saveRecord(actualElapsed, getToday(), activeTag);
       }
 
       timerIsRunning = false;
@@ -1226,7 +1504,7 @@
     function finishTimer() {
       if (timerLoop) clearInterval(timerLoop);
 
-      saveRecord(timerTotalElapsed, getToday(), "Timer");
+      saveRecord(timerTotalElapsed, getToday(), activeTag);
 
       timerIsRunning = false;
       timerState = "idle";
@@ -1237,10 +1515,6 @@
 
       updateDisplay();
     }
-
-    /* =====================================================
-       Alert
-    ===================================================== */
 
     let alertMode = localStorage.getItem("onItAlertMode") || "flash";
 
@@ -1320,10 +1594,6 @@
       else flashScreen();
     }
 
-    /* =====================================================
-       Records (CSV 내보내기/불러오기 지원)
-    ===================================================== */
-
     function parseDateStr(dateStr) {
       const parts = dateStr.split(".");
       return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
@@ -1375,26 +1645,89 @@
       localStorage.setItem("onItRecords", JSON.stringify(records));
     }
 
+    function renderRatioStats(records) {
+      const container = document.getElementById("ratioStatsList");
+      if (!container) return;
+
+      if (records.length === 0) {
+        container.innerHTML = `<div style="color:#777; font-size:13px; text-align:center;">데이터가 없습니다.</div>`;
+        return;
+      }
+
+      const activeTags = getCustomTags();
+      const tagTotals = {};
+      let totalAllSec = 0;
+
+      records.forEach(r => {
+        const t = r.type || "On It";
+        // 현재 태그 매니저에 등록된 활성 태그 데이터만 통계에 반영
+        if (activeTags.includes(t)) {
+          const sec = Number(r.seconds) || 0;
+          tagTotals[t] = (tagTotals[t] || 0) + sec;
+          totalAllSec += sec;
+        }
+      });
+
+      if (totalAllSec === 0) {
+        container.innerHTML = `<div style="color:#777; font-size:13px; text-align:center;">데이터가 없습니다.</div>`;
+        return;
+      }
+
+      const sortedTags = Object.keys(tagTotals).sort((a, b) => tagTotals[b] - tagTotals[a]);
+
+      container.innerHTML = sortedTags.map(tag => {
+        const sec = tagTotals[tag];
+        const percent = ((sec / totalAllSec) * 100).toFixed(1);
+        return `
+          <div class="ratio-item">
+            <div class="ratio-info-row">
+              <span>${tag}</span>
+              <span>${formatRecordText(sec)} (${percent}%)</span>
+            </div>
+            <div class="ratio-bar-bg">
+              <div class="ratio-bar-fill" style="width: ${percent}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
     function renderRecords() {
       const listContainer = document.getElementById("recordsList");
       const todayEl = document.getElementById("todayTotalValue");
       const weekEl = document.getElementById("weekTotalValue");
       const monthEl = document.getElementById("monthTotalValue");
+      const filterSelect = document.getElementById("recordTagFilter");
 
       const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      const activeTags = getCustomTags();
       
+      if (filterSelect) {
+        const currentFilterVal = filterSelect.value;
+        // 드롭다운 목록을 현재 활성 태그 매니저 목록으로만 제한
+        filterSelect.innerHTML = `<option value="ALL">모든 태그 (전체 보기)</option>` +
+          activeTags.map(t => `<option value="${t}" ${currentFilterVal === t ? 'selected' : ''}>${t}</option>`).join("");
+      }
+
+      const selectedFilter = filterSelect ? filterSelect.value : "ALL";
+      const filteredRecords = selectedFilter === "ALL" 
+        ? records.filter(r => activeTags.includes(r.type || "On It")) 
+        : records.filter(r => r.type === selectedFilter);
+
       const { todaySec, weekSec, monthSec } = getRangeTotals();
       todayEl.textContent = formatRecordText(todaySec);
       weekEl.textContent = formatRecordText(weekSec);
       monthEl.textContent = formatRecordText(monthSec);
 
-      if (records.length === 0) {
+      renderRatioStats(records);
+
+      if (filteredRecords.length === 0) {
         listContainer.innerHTML = `<div class="empty-records">기록이 없습니다.</div>`;
         return;
       }
 
       const grouped = {};
-      records.forEach(r => {
+      filteredRecords.forEach(r => {
         if (!grouped[r.date]) grouped[r.date] = [];
         grouped[r.date].push(r);
       });
@@ -1410,7 +1743,7 @@
             <div class="record-item">
               <div>
                 <span class="record-time">${displayText}</span>
-                <span class="record-type">[${item.type}]</span>
+                <span class="record-type">${item.type}</span>
               </div>
               <div class="record-actions">
                 <button onclick="editRecord(${item.id})" title="수정">✎</button>
@@ -1545,12 +1878,10 @@
       reader.readAsText(file);
     }
 
-    /* =====================================================
-       초기화
-    ===================================================== */
     window.addEventListener("DOMContentLoaded", () => {
       initPWA();
       loadBackgroundImage();
+      renderTagChips();
       updateDisplay();
       setInterval(updateDisplay, 1000);
     });
