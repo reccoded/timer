@@ -152,7 +152,7 @@
       gap: 8px;
       margin-bottom: 20px;
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       transition: opacity 0.2s ease;
     }
 
@@ -268,17 +268,17 @@
 
     .timer-inputs {
       display: flex;
-      gap: 16px;
+      gap: 12px;
     }
 
     .timer-input {
-      width: 80px;
-      height: 70px;
+      width: 70px;
+      height: 64px;
       background: #1c1c1c;
       border: 1px solid #333;
       border-radius: 14px;
       color: #fff;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 300;
       text-align: center;
       outline: none;
@@ -294,7 +294,7 @@
       gap: 10px;
       margin-bottom: 20px;
       width: 100%;
-      max-width: 320px;
+      max-width: 360px;
     }
 
     .preset-list {
@@ -762,7 +762,7 @@
       .session-time { font-size: 56px; }
       .total-time { font-size: 28px; }
       .timer-remaining { font-size: 56px; }
-      .timer-input { width: 68px; height: 60px; font-size: 24px; }
+      .timer-input { width: 58px; height: 56px; font-size: 20px; }
       .control-button { width: 62px; height: 62px; font-size: 20px; }
       .summary-card-value { font-size: 15px; }
     }
@@ -911,7 +911,7 @@
 
       if ("serviceWorker" in navigator) {
         const swCode = `
-          const CACHE_NAME = 'onit-v32-cache';
+          const CACHE_NAME = 'onit-v33-cache';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(clients.claim()));
           self.addEventListener('fetch', e => {
@@ -1323,9 +1323,9 @@
     let timerLoop = null;
 
     const DEFAULT_PRESETS = [
-      { id: "p1", name: "5 / 10 / 15", values: [5, 10, 15] },
-      { id: "p2", name: "25 / 5 / 25", values: [25, 5, 25] },
-      { id: "p3", name: "10 / 20 / 30", values: [10, 20, 30] }
+      { id: "p1", name: "25 / 5 / 25 / 5", values: [25, 5, 25, 5] },
+      { id: "p2", name: "50 / 10 / 50 / 10", values: [50, 10, 50, 10] },
+      { id: "p3", name: "10 / 2 / 10 / 2", values: [10, 2, 10, 2] }
     ];
 
     function getCustomPresets() {
@@ -1336,14 +1336,16 @@
       localStorage.setItem("onItTimerPresets", JSON.stringify(presets));
     }
 
-    function applyPreset(m1, m2, m3) {
+    function applyPreset(m1, m2, m3, m4) {
       const i1 = document.getElementById("tMin1");
       const i2 = document.getElementById("tMin2");
       const i3 = document.getElementById("tMin3");
-      if (i1 && i2 && i3) {
+      const i4 = document.getElementById("tMin4");
+      if (i1 && i2 && i3 && i4) {
         i1.value = m1;
         i2.value = m2;
         i3.value = m3;
+        i4.value = m4;
       }
     }
 
@@ -1351,8 +1353,9 @@
       const m1 = Math.max(0, parseInt(document.getElementById("tMin1").value) || 0);
       const m2 = Math.max(0, parseInt(document.getElementById("tMin2").value) || 0);
       const m3 = Math.max(0, parseInt(document.getElementById("tMin3").value) || 0);
+      const m4 = Math.max(0, parseInt(document.getElementById("tMin4").value) || 0);
 
-      if (m1 === 0 && m2 === 0 && m3 === 0) {
+      if (m1 === 0 && m2 === 0 && m3 === 0 && m4 === 0) {
         alert("최소 하나의 분 시간을 입력하세요.");
         return;
       }
@@ -1360,8 +1363,8 @@
       const presets = getCustomPresets();
       const newPreset = {
         id: "custom_" + Date.now(),
-        name: `${m1} / ${m2} / ${m3}`,
-        values: [m1, m2, m3]
+        name: `${m1} / ${m2} / ${m3} / ${m4}`,
+        values: [m1, m2, m3, m4]
       };
 
       presets.push(newPreset);
@@ -1393,7 +1396,7 @@
       const tags = getCustomTags();
 
       let presetButtonsHtml = presets.map(p => `
-        <button class="preset-btn" onclick="applyPreset(${p.values[0]}, ${p.values[1]}, ${p.values[2]})">
+        <button class="preset-btn" onclick="applyPreset(${p.values[0]}, ${p.values[1]}, ${p.values[2]}, ${p.values[3] || 0})">
           ${p.name}
           <span class="preset-del-btn" onclick="deletePreset('${p.id}', event)">✕</span>
         </button>
@@ -1412,9 +1415,10 @@
 
         <div class="timer-inputs-wrapper">
           <div class="timer-inputs">
-            <input type="number" id="tMin1" class="timer-input" value="5" min="0">
-            <input type="number" id="tMin2" class="timer-input" value="10" min="0">
-            <input type="number" id="tMin3" class="timer-input" value="15" min="0">
+            <input type="number" id="tMin1" class="timer-input" value="25" min="0">
+            <input type="number" id="tMin2" class="timer-input" value="5" min="0">
+            <input type="number" id="tMin3" class="timer-input" value="25" min="0">
+            <input type="number" id="tMin4" class="timer-input" value="5" min="0">
           </div>
         </div>
 
@@ -1434,7 +1438,7 @@
       page.innerHTML = `
         <div class="timer-status background-readable" id="timerStatusText">▶</div>
         <div class="timer-remaining background-readable" id="timerRemainingDisplay">00:00:00</div>
-        <div class="timer-phase-info background-readable" id="timerPhaseInfo">1 / 3</div>
+        <div class="timer-phase-info background-readable" id="timerPhaseInfo">1 / 4</div>
         <div class="controls">
           <button class="control-button active-play" id="timerPlayBtn" onclick="resumeTimer()">▶</button>
           <button class="control-button" onclick="pauseTimer()">Ⅱ</button>
@@ -1447,8 +1451,9 @@
       const m1 = Math.max(0, parseInt(document.getElementById("tMin1").value) || 0);
       const m2 = Math.max(0, parseInt(document.getElementById("tMin2").value) || 0);
       const m3 = Math.max(0, parseInt(document.getElementById("tMin3").value) || 0);
+      const m4 = Math.max(0, parseInt(document.getElementById("tMin4").value) || 0);
 
-      const phasesInSec = [m1 * 60, m2 * 60, m3 * 60].filter(sec => sec > 0);
+      const phasesInSec = [m1 * 60, m2 * 60, m3 * 60, m4 * 60].filter(sec => sec > 0);
 
       if (phasesInSec.length === 0) {
         alert("최소 하나의 구간에 분 시간을 입력해주세요.");
@@ -1760,12 +1765,10 @@
 
       const selectedFilter = filterSelect ? filterSelect.value : "ALL";
       
-      // 1단계: 태그 필터링
       let filteredRecords = selectedFilter === "ALL" 
         ? records.filter(r => activeTags.includes(r.type || "On It")) 
         : records.filter(r => r.type === selectedFilter);
 
-      // 2단계: 이번 달만 보기 기본값 필터 적용 여부 확인
       if (monthOnlyCheckbox && monthOnlyCheckbox.checked) {
         const now = new Date();
         const curY = now.getFullYear();
