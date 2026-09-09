@@ -161,6 +161,9 @@
       flex-wrap: wrap;
       gap: 6px;
       justify-content: center;
+      max-height: 150px;
+      overflow-y: auto;
+      width: 100%;
     }
 
     .tag-chip {
@@ -562,6 +565,9 @@
 
     .tag-filter-wrapper {
       margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .tag-filter-select {
@@ -573,7 +579,22 @@
       border-radius: 10px;
       outline: none;
       font-size: 14px;
-      max-height: 200px;
+    }
+
+    .filter-options-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #aaa;
+      padding: 0 4px;
+    }
+
+    .filter-options-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
     }
 
     .records-list { margin-top: 10px; }
@@ -596,6 +617,20 @@
       gap: 15px;
     }
 
+    .record-main-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .record-row-top {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .record-time { font-size: 20px; }
 
     .record-type {
@@ -604,7 +639,16 @@
       background: #222;
       padding: 2px 8px;
       border-radius: 6px;
-      margin-left: 8px;
+    }
+
+    .record-memo {
+      color: #ddd;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      width: fit-content;
     }
 
     .record-actions {
@@ -765,7 +809,7 @@
       <div class="tag-manage-title">작업 태그 관리</div>
       <div class="tag-manage-list" id="tagManageList"></div>
       <div class="tag-add-input-group">
-        <input type="text" id="newTagNameInput" placeholder="새 태그(작품명) 입력...">
+        <input type="text" id="newTagNameInput" placeholder="새 고정 태그 입력...">
         <button onclick="addNewTag()">추가</button>
       </div>
     </div>
@@ -803,6 +847,11 @@
       <select id="recordTagFilter" class="tag-filter-select" onchange="renderRecords()">
         <option value="ALL">모든 태그 (전체 보기)</option>
       </select>
+      <div class="filter-options-row">
+        <label>
+          <input type="checkbox" id="currentMonthOnlyCheckbox" checked onchange="renderRecords()"> 이번 달만 보기
+        </label>
+      </div>
     </div>
 
     <div class="records-list" id="recordsList"></div>
@@ -862,7 +911,7 @@
 
       if ("serviceWorker" in navigator) {
         const swCode = `
-          const CACHE_NAME = 'onit-v31-cache';
+          const CACHE_NAME = 'onit-v32-cache';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(clients.claim()));
           self.addEventListener('fetch', e => {
@@ -877,7 +926,7 @@
       }
     }
 
-    const DEFAULT_TAGS = ["On It", "웹소설 집필", "AI 프롬프트", "스토리보드 기획", "영상 편집"];
+    const DEFAULT_TAGS = ["탐색", "설계", "생성", "편집", "IN"];
     let activeTag = localStorage.getItem("onItActiveTag") || "On It";
 
     function getCustomTags() {
@@ -1253,7 +1302,7 @@
       }
 
       if (sessionSeconds > 0) {
-        saveRecord(sessionSeconds, getToday(), activeTag);
+        saveRecord(sessionSeconds, getToday(), activeTag, "");
       }
 
       sessionSeconds = 0;
@@ -1490,7 +1539,7 @@
       }
 
       if (actualElapsed > 0) {
-        saveRecord(actualElapsed, getToday(), activeTag);
+        saveRecord(actualElapsed, getToday(), activeTag, "");
       }
 
       timerIsRunning = false;
@@ -1504,7 +1553,7 @@
     function finishTimer() {
       if (timerLoop) clearInterval(timerLoop);
 
-      saveRecord(timerTotalElapsed, getToday(), activeTag);
+      saveRecord(timerTotalElapsed, getToday(), activeTag, "");
 
       timerIsRunning = false;
       timerState = "idle";
@@ -1630,7 +1679,7 @@
       return { todaySec, weekSec, monthSec };
     }
 
-    function saveRecord(seconds, date, type = "On It") {
+    function saveRecord(seconds, date, type = "On It", memo = "") {
       seconds = Math.max(0, Math.floor(Number(seconds) || 0));
       if (seconds <= 0) return;
 
@@ -1639,7 +1688,8 @@
         id: Date.now() + Math.floor(Math.random() * 1000),
         date: date || getToday(),
         seconds: seconds,
-        type: type
+        type: type,
+        memo: memo || ""
       });
 
       localStorage.setItem("onItRecords", JSON.stringify(records));
@@ -1660,7 +1710,6 @@
 
       records.forEach(r => {
         const t = r.type || "On It";
-        // 현재 태그 매니저에 등록된 활성 태그 데이터만 통계에 반영
         if (activeTags.includes(t)) {
           const sec = Number(r.seconds) || 0;
           tagTotals[t] = (tagTotals[t] || 0) + sec;
@@ -1698,21 +1747,34 @@
       const weekEl = document.getElementById("weekTotalValue");
       const monthEl = document.getElementById("monthTotalValue");
       const filterSelect = document.getElementById("recordTagFilter");
+      const monthOnlyCheckbox = document.getElementById("currentMonthOnlyCheckbox");
 
       const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
       const activeTags = getCustomTags();
       
       if (filterSelect) {
         const currentFilterVal = filterSelect.value;
-        // 드롭다운 목록을 현재 활성 태그 매니저 목록으로만 제한
         filterSelect.innerHTML = `<option value="ALL">모든 태그 (전체 보기)</option>` +
           activeTags.map(t => `<option value="${t}" ${currentFilterVal === t ? 'selected' : ''}>${t}</option>`).join("");
       }
 
       const selectedFilter = filterSelect ? filterSelect.value : "ALL";
-      const filteredRecords = selectedFilter === "ALL" 
+      
+      // 1단계: 태그 필터링
+      let filteredRecords = selectedFilter === "ALL" 
         ? records.filter(r => activeTags.includes(r.type || "On It")) 
         : records.filter(r => r.type === selectedFilter);
+
+      // 2단계: 이번 달만 보기 기본값 필터 적용 여부 확인
+      if (monthOnlyCheckbox && monthOnlyCheckbox.checked) {
+        const now = new Date();
+        const curY = now.getFullYear();
+        const curM = now.getMonth();
+        filteredRecords = filteredRecords.filter(r => {
+          const d = parseDateStr(r.date);
+          return d.getFullYear() === curY && d.getMonth() === curM;
+        });
+      }
 
       const { todaySec, weekSec, monthSec } = getRangeTotals();
       todayEl.textContent = formatRecordText(todaySec);
@@ -1739,11 +1801,15 @@
         html += `<div class="record-date">${date}</div>`;
         grouped[date].forEach(item => {
           const displayText = formatRecordText(item.seconds);
+          const memoHtml = item.memo ? `<div class="record-memo">💬 ${item.memo}</div>` : '';
           html += `
             <div class="record-item">
-              <div>
-                <span class="record-time">${displayText}</span>
-                <span class="record-type">${item.type}</span>
+              <div class="record-main-info">
+                <div class="record-row-top">
+                  <span class="record-time">${displayText}</span>
+                  <span class="record-type">${item.type}</span>
+                </div>
+                ${memoHtml}
               </div>
               <div class="record-actions">
                 <button onclick="editRecord(${item.id})" title="수정">✎</button>
@@ -1785,8 +1851,15 @@
         return;
       }
 
+      const memoInput = prompt(
+        `한 줄 메모를 입력하세요 \n비워두려면 내용을 지우세요:`,
+        item.memo || ""
+      );
+      if (memoInput === null) return;
+
       item.seconds = parsedMinutes * 60;
       item.type = trimmedTag;
+      item.memo = memoInput.trim();
       localStorage.setItem("onItRecords", JSON.stringify(records));
 
       renderRecords();
@@ -1826,9 +1899,10 @@
         return;
       }
 
-      let csv = "\uFEFFDate,Type,Duration,Seconds\n";
+      let csv = "\uFEFFDate,Type,Duration,Seconds,Memo\n";
       records.forEach(r => {
-        csv += `${r.date},${r.type},${formatRecordText(r.seconds)},${r.seconds}\n`;
+        const safeMemo = (r.memo || "").replace(/,/g, " ");
+        csv += `${r.date},${r.type},${formatRecordText(r.seconds)},${r.seconds},${safeMemo}\n`;
       });
 
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -1864,13 +1938,15 @@
             const date = parts[0].trim();
             const type = parts[1].trim();
             const seconds = parseInt(parts[3].trim(), 10);
+            const memo = parts[4] ? parts[4].trim() : "";
 
             if (date && !isNaN(seconds) && seconds > 0) {
               existingRecords.push({
                 id: Date.now() + i + Math.floor(Math.random() * 1000),
                 date: date,
                 type: type || "On It",
-                seconds: seconds
+                seconds: seconds,
+                memo: memo
               });
               importedCount++;
             }
