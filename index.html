@@ -911,7 +911,7 @@
 
       if ("serviceWorker" in navigator) {
         const swCode = `
-          const CACHE_NAME = 'onit-v34-cache';
+          const CACHE_NAME = 'onit-v35-cache';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(clients.claim()));
           self.addEventListener('fetch', e => {
@@ -1267,12 +1267,6 @@
       if (onItState === "running") {
         todayTotal += (currentSession - sessionSeconds);
       }
-      if (timerState === "running" && timerPhaseStartTime !== null) {
-        // 타이머 백그라운드 진행 시간 계산 반영
-        const timerActiveElapsed = Math.floor((Date.now() - timerPhaseStartTime) / 1000);
-        // 타이머의 이전 페이즈 누적 시간 + 현재 페이즈 진행 시간
-        // (하단 Total 계산은 전체 누적치에 현재 실행 중인 값 가산)
-      }
 
       document.getElementById("totalTime").textContent = formatOnIt(todayTotal);
     }
@@ -1451,9 +1445,32 @@
           <button class="control-button" onclick="stopTimer()">■</button>
         </div>
       `;
+      updateTimerRunningDisplay();
+    }
+
+    function updateTimerRunningDisplay() {
+      const display = document.getElementById("timerRemainingDisplay");
+      const phaseInfo = document.getElementById("timerPhaseInfo");
+      if (!display || !phaseInfo) return;
+
+      let currentPhaseSec = 0;
+      if (timerState === "running" && timerPhaseStartTime !== null) {
+        const elapsedSinceStart = Math.floor((Date.now() - timerPhaseStartTime) / 1000);
+        currentPhaseSec = Math.max(0, timerPhaseRemainingAtPause - elapsedSinceStart);
+      } else {
+        currentPhaseSec = timerPhaseRemainingAtPause;
+      }
+
+      display.textContent = formatTimer(currentPhaseSec);
+      phaseInfo.textContent = `${currentPhaseIndex + 1} / ${timerPhases.length}`;
     }
 
     function startTimerSetup() {
+      if (onItState === "running" || onItState === "paused" || sessionSeconds > 0) {
+        if (!confirm("On It이 작동 중입니다. 타이머를 시작할까요?")) return;
+        stopSession();
+      }
+
       const m1 = Math.max(0, parseInt(document.getElementById("tMin1").value) || 0);
       const m2 = Math.max(0, parseInt(document.getElementById("tMin2").value) || 0);
       const m3 = Math.max(0, parseInt(document.getElementById("tMin3").value) || 0);
@@ -1464,10 +1481,6 @@
       if (phasesInSec.length === 0) {
         alert("최소 하나의 구간에 분 시간을 입력해주세요.");
         return;
-      }
-
-      if (onItState === "running") {
-        pauseSession();
       }
 
       timerPhases = phasesInSec;
@@ -1491,14 +1504,7 @@
         const elapsedSinceStart = Math.floor((now - timerPhaseStartTime) / 1000);
         const currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
 
-        const display = document.getElementById("timerRemainingDisplay");
-        const phaseInfo = document.getElementById("timerPhaseInfo");
-
-        if (display) display.textContent = formatTimer(Math.max(0, currentPhaseSec));
-        if (phaseInfo) {
-          phaseInfo.textContent = `${currentPhaseIndex + 1} / ${timerPhases.length}`;
-        }
-
+        updateTimerRunningDisplay();
         updateDisplay();
 
         if (currentPhaseSec <= 0) {
@@ -1519,7 +1525,6 @@
     function pauseTimer() {
       if (timerState !== "running") return;
       
-      // 일시정지 시점의 남은 시간을 정확히 고정시킴
       const elapsedSinceStart = Math.floor((Date.now() - timerPhaseStartTime) / 1000);
       timerPhaseRemainingAtPause = Math.max(0, timerPhaseRemainingAtPause - elapsedSinceStart);
       timerState = "paused";
@@ -1529,12 +1534,14 @@
 
       const playBtn = document.getElementById("timerPlayBtn");
       if (playBtn) playBtn.classList.remove("active-play");
+
+      updateTimerRunningDisplay();
     }
 
     function resumeTimer() {
       if (timerState === "paused") {
         timerState = "running";
-        timerPhaseStartTime = Date.now(); // 재생을 누른 시점을 새 기준으로 갱신
+        timerPhaseStartTime = Date.now();
 
         const statusText = document.getElementById("timerStatusText");
         if (statusText) statusText.textContent = "▶";
