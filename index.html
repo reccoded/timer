@@ -911,7 +911,7 @@
 
       if ("serviceWorker" in navigator) {
         const swCode = `
-          const CACHE_NAME = 'onit-v33-cache';
+          const CACHE_NAME = 'onit-v34-cache';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(clients.claim()));
           self.addEventListener('fetch', e => {
@@ -1191,7 +1191,7 @@
       document.getElementById("timerPage").style.display = "flex";
       document.getElementById("headerTitle").textContent = "Timer";
 
-      if (timerIsRunning || timerState === "paused") {
+      if (timerState === "running" || timerState === "paused") {
         showTimerRunningScreen();
       } else {
         showTimerSetupScreen();
@@ -1218,9 +1218,10 @@
       closeMenu();
     }
 
-    let isRunning = false;
-    let startTime = null;
-    let sessionSeconds = 0;
+    // --- On It 스톱워치 상태 변수 ---
+    let onItState = "idle"; // "idle", "running", "paused"
+    let sessionSeconds = 0; // 누적된 시간 (초)
+    let onItStartTime = null; // 재생 시작 시점의 절대 시간 (ms)
 
     function getTodayTotalSeconds() {
       const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
@@ -1231,8 +1232,11 @@
     }
 
     function getCurrentOnItElapsed() {
-      if (!isRunning || startTime === null) return sessionSeconds;
-      return Math.max(0, Math.floor((Date.now() - startTime) / 1000));
+      if (onItState === "running" && onItStartTime !== null) {
+        const diff = Math.floor((Date.now() - onItStartTime) / 1000);
+        return sessionSeconds + diff;
+      }
+      return sessionSeconds;
     }
 
     function updateOnItStatus() {
@@ -1240,11 +1244,11 @@
       const playBtn = document.getElementById("onitPlayBtn");
       const tagWrapper = document.getElementById("onitTagWrapper");
 
-      if (isRunning) {
+      if (onItState === "running") {
         status.textContent = "▶";
         if (playBtn) playBtn.classList.add("active-play");
         if (tagWrapper) tagWrapper.style.display = "none";
-      } else if (sessionSeconds > 0) {
+      } else if (onItState === "paused" || sessionSeconds > 0) {
         status.textContent = "Ⅱ";
         if (playBtn) playBtn.classList.remove("active-play");
         if (tagWrapper) tagWrapper.style.display = "none";
@@ -1260,26 +1264,28 @@
       document.getElementById("sessionTime").textContent = formatOnIt(currentSession);
 
       let todayTotal = getTodayTotalSeconds();
-      if (isRunning) {
-        todayTotal += currentSession;
+      if (onItState === "running") {
+        todayTotal += (currentSession - sessionSeconds);
       }
-      if (timerIsRunning && timerStartTime !== null) {
-        const timerElapsed = Math.floor((Date.now() - timerStartTime) / 1000);
-        todayTotal += timerElapsed;
+      if (timerState === "running" && timerPhaseStartTime !== null) {
+        // 타이머 백그라운드 진행 시간 계산 반영
+        const timerActiveElapsed = Math.floor((Date.now() - timerPhaseStartTime) / 1000);
+        // 타이머의 이전 페이즈 누적 시간 + 현재 페이즈 진행 시간
+        // (하단 Total 계산은 전체 누적치에 현재 실행 중인 값 가산)
       }
 
       document.getElementById("totalTime").textContent = formatOnIt(todayTotal);
     }
 
     function startSession() {
-      if (timerIsRunning) {
+      if (timerState === "running" || timerState === "paused") {
         if (!confirm("타이머가 작동 중입니다. On It을 시작할까요?")) return;
         stopTimer();
       }
 
-      if (!isRunning) {
-        startTime = Date.now() - sessionSeconds * 1000;
-        isRunning = true;
+      if (onItState !== "running") {
+        onItStartTime = Date.now();
+        onItState = "running";
       }
 
       updateOnItStatus();
@@ -1287,17 +1293,17 @@
     }
 
     function pauseSession() {
-      if (!isRunning) return;
+      if (onItState !== "running") return;
       sessionSeconds = getCurrentOnItElapsed();
-      isRunning = false;
-      startTime = null;
+      onItState = "paused";
+      onItStartTime = null;
 
       updateOnItStatus();
       updateDisplay();
     }
 
     function stopSession() {
-      if (isRunning) {
+      if (onItState === "running") {
         sessionSeconds = getCurrentOnItElapsed();
       }
 
@@ -1306,19 +1312,19 @@
       }
 
       sessionSeconds = 0;
-      isRunning = false;
-      startTime = null;
+      onItState = "idle";
+      onItStartTime = null;
 
       updateOnItStatus();
       updateDisplay();
     }
 
-    let timerIsRunning = false;
-    let timerState = "idle";
+    // --- 뽀모도로 타이머 상태 변수 ---
+    let timerState = "idle"; // "idle", "running", "paused"
     let timerPhases = [];
     let currentPhaseIndex = 0;
-    let timerStartTime = null;
-    let timerPhaseStartTime = null;
+    let timerPhaseStartTime = null; // 현재 페이즈 시작 시점 절대 시간 (ms)
+    let timerPhaseRemainingAtPause = 0; // 일시정지 시점의 남은 초
     let timerTotalElapsed = 0;
     let timerLoop = null;
 
@@ -1436,11 +1442,11 @@
     function showTimerRunningScreen() {
       const page = document.getElementById("timerPage");
       page.innerHTML = `
-        <div class="timer-status background-readable" id="timerStatusText">▶</div>
+        <div class="timer-status background-readable" id="timerStatusText">${timerState === "running" ? "▶" : "Ⅱ"}</div>
         <div class="timer-remaining background-readable" id="timerRemainingDisplay">00:00:00</div>
         <div class="timer-phase-info background-readable" id="timerPhaseInfo">1 / 4</div>
         <div class="controls">
-          <button class="control-button active-play" id="timerPlayBtn" onclick="resumeTimer()">▶</button>
+          <button class="control-button ${timerState === "running" ? 'active-play' : ''}" id="timerPlayBtn" onclick="resumeTimer()">▶</button>
           <button class="control-button" onclick="pauseTimer()">Ⅱ</button>
           <button class="control-button" onclick="stopTimer()">■</button>
         </div>
@@ -1460,16 +1466,15 @@
         return;
       }
 
-      if (isRunning) {
+      if (onItState === "running") {
         pauseSession();
       }
 
       timerPhases = phasesInSec;
       currentPhaseIndex = 0;
       timerTotalElapsed = 0;
-      timerStartTime = Date.now();
+      timerPhaseRemainingAtPause = timerPhases[0];
       timerPhaseStartTime = Date.now();
-      timerIsRunning = true;
       timerState = "running";
 
       showTimerRunningScreen();
@@ -1480,29 +1485,29 @@
       if (timerLoop) clearInterval(timerLoop);
 
       timerLoop = setInterval(() => {
-        if (!timerIsRunning) return;
+        if (timerState !== "running") return;
 
         const now = Date.now();
-        const currentPhaseSec = timerPhases[currentPhaseIndex];
-        const phaseElapsed = Math.floor((now - timerPhaseStartTime) / 1000);
-        const phaseRemaining = Math.max(0, currentPhaseSec - phaseElapsed);
+        const elapsedSinceStart = Math.floor((now - timerPhaseStartTime) / 1000);
+        const currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
 
         const display = document.getElementById("timerRemainingDisplay");
-        if (display) display.textContent = formatTimer(phaseRemaining);
-
         const phaseInfo = document.getElementById("timerPhaseInfo");
+
+        if (display) display.textContent = formatTimer(Math.max(0, currentPhaseSec));
         if (phaseInfo) {
           phaseInfo.textContent = `${currentPhaseIndex + 1} / ${timerPhases.length}`;
         }
 
         updateDisplay();
 
-        if (phaseRemaining <= 0) {
+        if (currentPhaseSec <= 0) {
           triggerTimerAlert();
-          timerTotalElapsed += currentPhaseSec;
+          timerTotalElapsed += timerPhases[currentPhaseIndex];
           currentPhaseIndex++;
 
           if (currentPhaseIndex < timerPhases.length) {
+            timerPhaseRemainingAtPause = timerPhases[currentPhaseIndex];
             timerPhaseStartTime = Date.now();
           } else {
             finishTimer();
@@ -1512,9 +1517,13 @@
     }
 
     function pauseTimer() {
-      if (!timerIsRunning) return;
-      timerIsRunning = false;
+      if (timerState !== "running") return;
+      
+      // 일시정지 시점의 남은 시간을 정확히 고정시킴
+      const elapsedSinceStart = Math.floor((Date.now() - timerPhaseStartTime) / 1000);
+      timerPhaseRemainingAtPause = Math.max(0, timerPhaseRemainingAtPause - elapsedSinceStart);
       timerState = "paused";
+
       const statusText = document.getElementById("timerStatusText");
       if (statusText) statusText.textContent = "Ⅱ";
 
@@ -1524,8 +1533,9 @@
 
     function resumeTimer() {
       if (timerState === "paused") {
-        timerIsRunning = true;
         timerState = "running";
+        timerPhaseStartTime = Date.now(); // 재생을 누른 시점을 새 기준으로 갱신
+
         const statusText = document.getElementById("timerStatusText");
         if (statusText) statusText.textContent = "▶";
 
@@ -1538,18 +1548,20 @@
       if (timerLoop) clearInterval(timerLoop);
 
       let actualElapsed = timerTotalElapsed;
-      if (timerIsRunning || timerState === "paused") {
-        const phaseElapsed = Math.floor((Date.now() - timerPhaseStartTime) / 1000);
-        actualElapsed += Math.min(phaseElapsed, timerPhases[currentPhaseIndex] || 0);
+      if (timerState === "running") {
+        const elapsedSinceStart = Math.floor((Date.now() - timerPhaseStartTime) / 1000);
+        const currentRemaining = Math.max(0, timerPhaseRemainingAtPause - elapsedSinceStart);
+        actualElapsed += (timerPhases[currentPhaseIndex] - currentRemaining);
+      } else if (timerState === "paused") {
+        actualElapsed += (timerPhases[currentPhaseIndex] - timerPhaseRemainingAtPause);
       }
 
       if (actualElapsed > 0) {
         saveRecord(actualElapsed, getToday(), activeTag, "");
       }
 
-      timerIsRunning = false;
       timerState = "idle";
-      timerStartTime = null;
+      timerPhaseStartTime = null;
 
       showTimerSetupScreen();
       updateDisplay();
@@ -1560,9 +1572,8 @@
 
       saveRecord(timerTotalElapsed, getToday(), activeTag, "");
 
-      timerIsRunning = false;
       timerState = "idle";
-      timerStartTime = null;
+      timerPhaseStartTime = null;
 
       const statusText = document.getElementById("timerStatusText");
       if (statusText) statusText.textContent = "■";
@@ -1974,7 +1985,7 @@
       loadBackgroundImage();
       renderTagChips();
       updateDisplay();
-      setInterval(updateDisplay, 1000);
+      setInterval(updateDisplay, 500);
     });
   </script>
 </body>
