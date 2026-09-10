@@ -579,13 +579,25 @@
 
     .records-list { margin-top: 10px; }
 
-    .record-date {
-      font-size: 18px;
+    .record-date-container {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
       margin-top: 25px;
       margin-bottom: 10px;
-      color: #888;
       border-bottom: 1px solid #222;
       padding-bottom: 5px;
+    }
+
+    .record-date {
+      font-size: 18px;
+      color: #888;
+    }
+
+    .record-date-total {
+      font-size: 14px;
+      color: #aaa;
+      font-weight: 400;
     }
 
     .record-item {
@@ -891,7 +903,7 @@
 
       if ("serviceWorker" in navigator) {
         const swCode = `
-          const CACHE_NAME = 'onit-v35-cache';
+          const CACHE_NAME = 'onit-v36-cache';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(clients.claim()));
           self.addEventListener('fetch', e => {
@@ -1017,6 +1029,15 @@
         result += `0분 ${secs}초`;
       }
       return result.trim();
+    }
+
+    // 날짜별 합산 시간을 '1.7시간' 또는 '2시간 15분' 형태로 보기 좋게 변환해 주는 함수
+    function formatDayTotalText(seconds) {
+      seconds = Math.max(0, Math.floor(Number(seconds) || 0));
+      if (seconds === 0) return "0시간";
+      
+      const hoursDecimal = (seconds / 3600).toFixed(1);
+      return `${hoursDecimal}시간`;
     }
 
     function formatTimer(seconds) {
@@ -1199,9 +1220,9 @@
     }
 
     // --- On It 스톱워치 상태 변수 ---
-    let onItState = "idle"; // "idle", "running", "paused"
-    let sessionSeconds = 0; // 누적된 시간 (초)
-    let onItStartTime = null; // 재생 시작 시점의 절대 시간 (ms)
+    let onItState = "idle";
+    let sessionSeconds = 0;
+    let onItStartTime = null;
 
     function getTodayTotalSeconds() {
       const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
@@ -1293,11 +1314,11 @@
     }
 
     // --- 뽀모도로 타이머 상태 변수 ---
-    let timerState = "idle"; // "idle", "running", "paused"
+    let timerState = "idle";
     let timerPhases = [];
     let currentPhaseIndex = 0;
-    let timerPhaseStartTime = null; // 현재 페이즈 시작 시점 절대 시간 (ms)
-    let timerPhaseRemainingAtPause = 0; // 일시정지 시점의 남은 초
+    let timerPhaseStartTime = null;
+    let timerPhaseRemainingAtPause = 0;
     let timerTotalElapsed = 0;
     let timerLoop = null;
 
@@ -1800,7 +1821,17 @@
       let html = "";
 
       sortedDates.forEach(date => {
-        html += `<div class="record-date">${date}</div>`;
+        // 해당 날짜 항목들의 총 초(seconds) 계산
+        const dayTotalSec = grouped[date].reduce((sum, item) => sum + (Number(item.seconds) || 0), 0);
+        const dayTotalString = formatDayTotalText(dayTotalSec);
+
+        html += `
+          <div class="record-date-container">
+            <div class="record-date">${date}</div>
+            <div class="record-date-total">${dayTotalString}</div>
+          </div>
+        `;
+
         grouped[date].forEach(item => {
           const displayText = formatRecordText(item.seconds);
           const memoHtml = item.memo ? `<div class="record-memo">💬 ${item.memo}</div>` : '';
