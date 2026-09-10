@@ -223,10 +223,10 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.5);
     }
 
-    .control-button.active-play {
-      border-color: rgba(255, 255, 255, 0.6);
+    .control-button.active-glow {
+      border-color: rgba(255, 255, 255, 0.9);
       background: linear-gradient(145deg, #3a3a3a, #222222);
-      box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
       color: #fff;
     }
 
@@ -235,16 +235,6 @@
       font-weight: 300;
       letter-spacing: 1px;
       margin-bottom: 5px;
-    }
-
-    .status {
-      font-size: 24px;
-      height: 40px;
-      margin-bottom: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ccc;
     }
 
     .total-label {
@@ -345,16 +335,6 @@
     .preset-add-btn:hover {
       border-color: #aaa;
       color: #fff;
-    }
-
-    .timer-status {
-      font-size: 24px;
-      height: 40px;
-      margin-bottom: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ccc;
     }
 
     .timer-remaining {
@@ -785,8 +765,6 @@
   </nav>
 
   <main class="onit-page" id="onitPage">
-    <div class="status background-readable" id="status">■</div>
-    
     <div class="tag-selector-wrapper background-readable" id="onitTagWrapper">
       <div class="tag-chips" id="onitTagChips"></div>
     </div>
@@ -797,7 +775,7 @@
 
     <div class="controls">
       <button class="control-button" id="onitPlayBtn" onclick="startSession()">▶</button>
-      <button class="control-button" onclick="pauseSession()">Ⅱ</button>
+      <button class="control-button" id="onitPauseBtn" onclick="pauseSession()">Ⅱ</button>
       <button class="control-button" onclick="stopSession()">■</button>
     </div>
   </main>
@@ -805,15 +783,6 @@
   <section class="timer-page" id="timerPage" style="display: none;"></section>
 
   <section class="records-page" id="recordsPage" style="display: none;">
-    <div class="tag-manage-box">
-      <div class="tag-manage-title">작업 태그 관리</div>
-      <div class="tag-manage-list" id="tagManageList"></div>
-      <div class="tag-add-input-group">
-        <input type="text" id="newTagNameInput" placeholder="새 고정 태그 입력...">
-        <button onclick="addNewTag()">추가</button>
-      </div>
-    </div>
-
     <div class="records-toolbar">
       <button onclick="triggerImportCSV()">CSV 불러오기</button>
       <button onclick="exportRecordsCSV()">CSV 내보내기</button>
@@ -858,6 +827,17 @@
   </section>
 
   <section class="settings-page" id="settingsPage" style="display: none;">
+    <div class="settings-section">
+      <div class="settings-title">작업 태그 관리</div>
+      <div class="tag-manage-box">
+        <div class="tag-manage-list" id="tagManageList"></div>
+        <div class="tag-add-input-group">
+          <input type="text" id="newTagNameInput" placeholder="새 고정 태그 입력...">
+          <button onclick="addNewTag()">추가</button>
+        </div>
+      </div>
+    </div>
+
     <div class="settings-section">
       <div class="settings-title">Alert</div>
 
@@ -1205,7 +1185,6 @@
       hideAllPages();
       document.getElementById("recordsPage").style.display = "block";
       document.getElementById("headerTitle").textContent = "Records";
-      renderTagManagerUI();
       renderRecords();
       closeMenu();
     }
@@ -1214,6 +1193,7 @@
       hideAllPages();
       document.getElementById("settingsPage").style.display = "block";
       document.getElementById("headerTitle").textContent = "Settings";
+      renderTagManagerUI();
       renderSettings();
       closeMenu();
     }
@@ -1240,21 +1220,20 @@
     }
 
     function updateOnItStatus() {
-      const status = document.getElementById("status");
       const playBtn = document.getElementById("onitPlayBtn");
+      const pauseBtn = document.getElementById("onitPauseBtn");
       const tagWrapper = document.getElementById("onitTagWrapper");
 
+      if (playBtn) playBtn.classList.remove("active-glow");
+      if (pauseBtn) pauseBtn.classList.remove("active-glow");
+
       if (onItState === "running") {
-        status.textContent = "▶";
-        if (playBtn) playBtn.classList.add("active-play");
+        if (playBtn) playBtn.classList.add("active-glow");
         if (tagWrapper) tagWrapper.style.display = "none";
       } else if (onItState === "paused" || sessionSeconds > 0) {
-        status.textContent = "Ⅱ";
-        if (playBtn) playBtn.classList.remove("active-play");
+        if (pauseBtn) pauseBtn.classList.add("active-glow");
         if (tagWrapper) tagWrapper.style.display = "none";
       } else {
-        status.textContent = "■";
-        if (playBtn) playBtn.classList.remove("active-play");
         if (tagWrapper) tagWrapper.style.display = "flex";
       }
     }
@@ -1436,12 +1415,11 @@
     function showTimerRunningScreen() {
       const page = document.getElementById("timerPage");
       page.innerHTML = `
-        <div class="timer-status background-readable" id="timerStatusText">${timerState === "running" ? "▶" : "Ⅱ"}</div>
         <div class="timer-remaining background-readable" id="timerRemainingDisplay">00:00:00</div>
         <div class="timer-phase-info background-readable" id="timerPhaseInfo">1 / 4</div>
         <div class="controls">
-          <button class="control-button ${timerState === "running" ? 'active-play' : ''}" id="timerPlayBtn" onclick="resumeTimer()">▶</button>
-          <button class="control-button" onclick="pauseTimer()">Ⅱ</button>
+          <button class="control-button" id="timerPlayBtn" onclick="resumeTimer()">▶</button>
+          <button class="control-button" id="timerPauseBtn" onclick="pauseTimer()">Ⅱ</button>
           <button class="control-button" onclick="stopTimer()">■</button>
         </div>
       `;
@@ -1451,7 +1429,19 @@
     function updateTimerRunningDisplay() {
       const display = document.getElementById("timerRemainingDisplay");
       const phaseInfo = document.getElementById("timerPhaseInfo");
+      const playBtn = document.getElementById("timerPlayBtn");
+      const pauseBtn = document.getElementById("timerPauseBtn");
+
       if (!display || !phaseInfo) return;
+
+      if (playBtn) playBtn.classList.remove("active-glow");
+      if (pauseBtn) pauseBtn.classList.remove("active-glow");
+
+      if (timerState === "running") {
+        if (playBtn) playBtn.classList.add("active-glow");
+      } else if (timerState === "paused") {
+        if (pauseBtn) pauseBtn.classList.add("active-glow");
+      }
 
       let currentPhaseSec = 0;
       if (timerState === "running" && timerPhaseStartTime !== null) {
@@ -1529,12 +1519,6 @@
       timerPhaseRemainingAtPause = Math.max(0, timerPhaseRemainingAtPause - elapsedSinceStart);
       timerState = "paused";
 
-      const statusText = document.getElementById("timerStatusText");
-      if (statusText) statusText.textContent = "Ⅱ";
-
-      const playBtn = document.getElementById("timerPlayBtn");
-      if (playBtn) playBtn.classList.remove("active-play");
-
       updateTimerRunningDisplay();
     }
 
@@ -1543,11 +1527,7 @@
         timerState = "running";
         timerPhaseStartTime = Date.now();
 
-        const statusText = document.getElementById("timerStatusText");
-        if (statusText) statusText.textContent = "▶";
-
-        const playBtn = document.getElementById("timerPlayBtn");
-        if (playBtn) playBtn.classList.add("active-play");
+        updateTimerRunningDisplay();
       }
     }
 
@@ -1582,9 +1562,6 @@
       timerState = "idle";
       timerPhaseStartTime = null;
 
-      const statusText = document.getElementById("timerStatusText");
-      if (statusText) statusText.textContent = "■";
-
       updateDisplay();
     }
 
@@ -1601,6 +1578,8 @@
       const flashBtn = document.getElementById("flashAlertButton");
       const soundBtn = document.getElementById("soundAlertButton");
       const currentText = document.getElementById("currentAlertText");
+
+      if (!flashBtn || !soundBtn) return;
 
       flashBtn.classList.remove("selected");
       soundBtn.classList.remove("selected");
@@ -1798,11 +1777,13 @@
       }
 
       const { todaySec, weekSec, monthSec } = getRangeTotals();
-      todayEl.textContent = formatRecordText(todaySec);
-      weekEl.textContent = formatRecordText(weekSec);
-      monthEl.textContent = formatRecordText(monthSec);
+      if (todayEl) todayEl.textContent = formatRecordText(todaySec);
+      if (weekEl) weekEl.textContent = formatRecordText(weekSec);
+      if (monthEl) monthEl.textContent = formatRecordText(monthSec);
 
       renderRatioStats(records);
+
+      if (!listContainer) return;
 
       if (filteredRecords.length === 0) {
         listContainer.innerHTML = `<div class="empty-records">기록이 없습니다.</div>`;
