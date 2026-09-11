@@ -167,7 +167,6 @@
       width: 100%;
     }
 
-    /* 태그 및 프리셋 버튼: 그림자 제거, 깔끔한 테두리와 배경만 유지 */
     .tag-chip,
     .preset-btn {
       padding: 6px 12px;
@@ -269,11 +268,20 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.5);
     }
 
-    .control-button.active-glow {
-      border-color: rgba(255, 255, 255, 0.9);
-      background: linear-gradient(145deg, #3a3a3a, #222222);
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
-      color: #fff;
+    /* 스타일리시한 노란색 형광 글로우 (세모 버튼 활성화 시) */
+    .control-button.active-glow-play {
+      border-color: rgba(255, 230, 80, 0.9);
+      background: linear-gradient(145deg, #3a351a, #222012);
+      box-shadow: 0 0 25px rgba(255, 220, 50, 0.55), inset 0 0 12px rgba(255, 220, 50, 0.25);
+      color: #ffe650;
+    }
+
+    /* 스타일리시한 하늘색 형광 글로우 (일시정지 버튼 활성화 시) */
+    .control-button.active-glow-pause {
+      border-color: rgba(80, 210, 255, 0.9);
+      background: linear-gradient(145deg, #1a323a, #121c22);
+      box-shadow: 0 0 25px rgba(50, 200, 255, 0.55), inset 0 0 12px rgba(50, 200, 255, 0.25);
+      color: #50d2ff;
     }
 
     .session-time {
@@ -1235,14 +1243,14 @@
       const pauseBtn = document.getElementById("onitPauseBtn");
       const tagWrapper = document.getElementById("onitTagWrapper");
 
-      if (playBtn) playBtn.classList.remove("active-glow");
-      if (pauseBtn) pauseBtn.classList.remove("active-glow");
+      if (playBtn) playBtn.classList.remove("active-glow-play");
+      if (pauseBtn) pauseBtn.classList.remove("active-glow-pause");
 
       if (onItState === "running") {
-        if (playBtn) playBtn.classList.add("active-glow");
+        if (playBtn) playBtn.classList.add("active-glow-play");
         if (tagWrapper) tagWrapper.style.display = "none";
       } else if (onItState === "paused" || sessionSeconds > 0) {
-        if (pauseBtn) pauseBtn.classList.add("active-glow");
+        if (pauseBtn) pauseBtn.classList.add("active-glow-pause");
         if (tagWrapper) tagWrapper.style.display = "none";
       } else {
         if (tagWrapper) tagWrapper.style.display = "flex";
@@ -1444,13 +1452,13 @@
 
       if (!display || !phaseInfo) return;
 
-      if (playBtn) playBtn.classList.remove("active-glow");
-      if (pauseBtn) pauseBtn.classList.remove("active-glow");
+      if (playBtn) playBtn.classList.remove("active-glow-play");
+      if (pauseBtn) pauseBtn.classList.remove("active-glow-pause");
 
       if (timerState === "running") {
-        if (playBtn) playBtn.classList.add("active-glow");
+        if (playBtn) playBtn.classList.add("active-glow-play");
       } else if (timerState === "paused") {
-        if (pauseBtn) pauseBtn.classList.add("active-glow");
+        if (pauseBtn) pauseBtn.classList.add("active-glow-pause");
       }
 
       let currentPhaseSec = 0;
