@@ -817,13 +817,14 @@
 
     .timelog-minutes-head, .timelog-row {
       display: grid;
-      grid-template-columns: 38px repeat(6, 1fr);
+      grid-template-columns: 38px repeat(6, 1fr) 38px;
       gap: 4px;
       align-items: center;
     }
 
     .timelog-minutes-head { margin-bottom: 5px; color: #777; font-size: 11px; text-align: center; }
     .timelog-hour { color: #8f8f8f; font-size: 13px; text-align: right; padding-right: 6px; }
+    .timelog-hour-right { text-align: left; padding-right: 0; padding-left: 2px; }
     .timelog-cell {
       height: 24px;
       border: 1px solid #303030;
@@ -882,7 +883,7 @@
       .summary-card-value { font-size: 15px; }
       .timelog-page { padding: 70px 12px 30px; }
       .timelog-grid-wrap { padding: 10px 8px; }
-      .timelog-minutes-head, .timelog-row { grid-template-columns: 34px repeat(6, 1fr); gap: 3px; }
+      .timelog-minutes-head, .timelog-row { grid-template-columns: 34px repeat(6, 1fr) 34px; gap: 3px; }
       .timelog-cell { height: 23px; }
       .timelog-date-label { min-width: 155px; font-size: 15px; }
     }
@@ -2283,7 +2284,7 @@
       const data = loadTimeLogData();
       const key = timelogDateKey(timelogSelectedDate);
       const arr = ensureTimeLogDay(data, key);
-      let html = '<div class="timelog-minutes-head"><div></div>' + [0,10,20,30,40,50].map(m => `<div>${String(m).padStart(2,"0")}</div>`).join('') + '</div>';
+      let html = '<div class="timelog-minutes-head"><div></div>' + [10,20,30,40,50,60].map(m => `<div>${m}</div>`).join('') + '<div></div></div>';
       for (let h = 7; h <= 23; h++) {
         html += `<div class="timelog-row"><div class="timelog-hour">${String(h).padStart(2,"0")}</div>`;
         for (let m = 0; m < 60; m += 10) {
@@ -2291,7 +2292,7 @@
           const v = arr[index] || "";
           html += `<div class="timelog-cell ${v ? v.toLowerCase() : ''}" data-index="${index}" title="${timeLogSlotLabel(index)}"></div>`;
         }
-        html += '</div>';
+        html += `<div class="timelog-hour timelog-hour-right">${String(h).padStart(2,"0")}</div></div>`;
       }
       grid.innerHTML = html;
 
