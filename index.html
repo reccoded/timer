@@ -1026,7 +1026,7 @@
       <div class="tag-chips" id="onitTagChips"></div>
     </div>
 
-    <div class="session-time background-readable" id="sessionTime">00:00:00</div>
+    <div class="session-time background-readable" id="sessionTime">00&thinsp;00&thinsp;00</div>
     <div class="focus-subinfo background-readable" id="totalTime">TODAY · 0.0h</div>
 
     <div class="controls">
@@ -1093,10 +1093,10 @@
     </div>
 
     <div class="timelog-toolbar">
-      <button class="timelog-tool-o active" id="timelogToolO" onclick="setTimeLogTool('O')">O</button>
+      <button class="timelog-tool-o" id="timelogToolO" onclick="setTimeLogTool('O')">O</button>
       <button class="timelog-tool-i" id="timelogToolI" onclick="setTimeLogTool('I')">I</button>
       <button class="timelog-tool-x" id="timelogToolX" onclick="setTimeLogTool('X')">X</button>
-      <button class="timelog-tool-erase" id="timelogToolErase" onclick="setTimeLogTool('')">🧽</button>
+      <button class="timelog-tool-erase" id="timelogToolErase" onclick="setTimeLogTool('ERASE')">⌫</button>
     </div>
 
     <div class="timelog-grid-wrap" id="timelogGrid"></div>
@@ -1273,7 +1273,7 @@
       const hours = Math.floor(seconds / 3600);
       const minutes = Math.floor((seconds % 3600) / 60);
       const secs = seconds % 60;
-      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+      return `${String(hours).padStart(2, "0")}\u2009${String(minutes).padStart(2, "0")}\u2009${String(secs).padStart(2, "0")}`;
     }
 
     function formatTodayHours(seconds) {
@@ -1314,8 +1314,8 @@
       const secs = seconds % 60;
 
       return (
-        String(hours).padStart(2, "0") + ":" +
-        String(minutes).padStart(2, "0") + ":" +
+        String(hours).padStart(2, "0") + "\u2009" +
+        String(minutes).padStart(2, "0") + "\u2009" +
         String(secs).padStart(2, "0")
       );
     }
@@ -1482,6 +1482,11 @@
       hideAllPages();
       document.getElementById("timeLogPage").style.display = "block";
       document.getElementById("headerTitle").textContent = "Time Log";
+      timelogTool = null;
+      ["O","I","X","Erase"].forEach(k => {
+        const el = document.getElementById("timelogTool" + k);
+        if (el) el.classList.remove("active");
+      });
       renderTimeLog();
       closeMenu();
     }
@@ -1710,7 +1715,7 @@
     function showTimerRunningScreen() {
       const page = document.getElementById("timerPage");
       page.innerHTML = `
-        <div class="timer-remaining background-readable" id="timerRemainingDisplay">00:00:00</div>
+        <div class="timer-remaining background-readable" id="timerRemainingDisplay">00&thinsp;00&thinsp;00</div>
         <div class="timer-phase-info background-readable" id="timerPhaseInfo">1 / 4</div>
         <div class="controls">
           <button class="control-button" id="timerPlayBtn" onclick="resumeTimer()">▶</button>
@@ -1968,12 +1973,12 @@
     }
 
     function triggerTimerAlert() {
-      if (document.visibilityState !== "visible") {
+      if (alertMode === "sound") {
+        playAlertSound();
+      } else {
+        flashScreen();
         showBackgroundTimerNotification();
       }
-
-      if (alertMode === "sound") playAlertSound();
-      else flashScreen();
     }
 
     function parseDateStr(dateStr) {
@@ -2318,7 +2323,7 @@
     const TIMELOG_SLOTS = (TIMELOG_END_MIN - TIMELOG_START_MIN) / TIMELOG_STEP;
     let timelogSelectedDate = new Date();
     timelogSelectedDate.setHours(0, 0, 0, 0);
-    let timelogTool = "O";
+    let timelogTool = null;
     let timelogPainting = false;
 
     function timelogDateKey(d) {
@@ -2364,7 +2369,7 @@
         const el = document.getElementById("timelogTool" + k);
         if (el) el.classList.remove("active");
       });
-      const id = tool === "" ? "timelogToolErase" : "timelogTool" + tool;
+      const id = tool === "ERASE" ? "timelogToolErase" : "timelogTool" + tool;
       const el = document.getElementById(id);
       if (el) el.classList.add("active");
     }
@@ -2392,17 +2397,19 @@
     }
 
     function paintTimeLogCell(index) {
+      if (timelogTool === null) return;
       const today = new Date(); today.setHours(0,0,0,0);
       if (timelogSelectedDate > today) return;
       const data = loadTimeLogData();
       const key = timelogDateKey(timelogSelectedDate);
       const arr = ensureTimeLogDay(data, key);
-      arr[index] = timelogTool;
+      const value = timelogTool === "ERASE" ? "" : timelogTool;
+      arr[index] = value;
       saveTimeLogData(data);
       const cell = document.querySelector(`.timelog-cell[data-index="${index}"]`);
       if (cell) {
         cell.classList.remove("o","i","x");
-        if (timelogTool) cell.classList.add(timelogTool.toLowerCase());
+        if (value) cell.classList.add(value.toLowerCase());
       }
       renderTimeLogStats();
     }
@@ -2465,7 +2472,7 @@
     function timelogHours(mins) { return (mins / 60).toFixed(1) + "시간"; }
 
     function timelogStatsHtml(t) {
-      return `<span class="timelog-stat-o">O ${timelogHours(t.O)}</span><span class="timelog-stat-i">I ${timelogHours(t.I)}</span><span class="timelog-stat-x">X ${timelogHours(t.X)}</span>`;
+      return `<span class="timelog-stat-o">${timelogHours(t.O)}</span><span class="timelog-stat-i">${timelogHours(t.I)}</span><span class="timelog-stat-x">${timelogHours(t.X)}</span>`;
     }
 
     function renderTimeLogStats() {
