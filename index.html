@@ -749,6 +749,129 @@
 
     #backgroundFileInput { display: none; }
 
+
+
+    /* ===== Time Log ===== */
+    .timelog-page {
+      min-height: 100vh;
+      padding: 80px 20px 40px;
+      max-width: 700px;
+      margin: 0 auto;
+      background: #111;
+      color: #fff;
+    }
+
+    .timelog-datebar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .timelog-datebar button,
+    .timelog-toolbar button,
+    .timelog-data-actions button {
+      border: 1px solid #333;
+      background: #1c1c1c;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .timelog-datebar button { padding: 8px 11px; font-size: 14px; }
+    .timelog-datebar button:disabled { opacity: .35; cursor: default; }
+    .timelog-date-label { min-width: 180px; text-align: center; font-size: 17px; color: #ddd; }
+
+    .timelog-toolbar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .timelog-toolbar button {
+      padding: 11px 8px;
+      font-size: 17px;
+      font-weight: 700;
+      transition: all .15s ease;
+    }
+
+    .timelog-toolbar button.active { outline: 2px solid rgba(255,255,255,.35); outline-offset: 1px; }
+    .timelog-tool-o { color: #ff7a3d !important; }
+    .timelog-tool-i { color: #59a8ff !important; font-family: Georgia, 'Times New Roman', serif; }
+    .timelog-tool-x { color: #87917a !important; }
+    .timelog-tool-erase { color: #ddd !important; }
+
+    .timelog-grid-wrap {
+      background: #181818;
+      border: 1px solid #292929;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 15px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    .timelog-minutes-head, .timelog-row {
+      display: grid;
+      grid-template-columns: 38px repeat(6, 1fr);
+      gap: 4px;
+      align-items: center;
+    }
+
+    .timelog-minutes-head { margin-bottom: 5px; color: #777; font-size: 11px; text-align: center; }
+    .timelog-hour { color: #8f8f8f; font-size: 13px; text-align: right; padding-right: 6px; }
+    .timelog-cell {
+      height: 24px;
+      border: 1px solid #303030;
+      border-radius: 4px;
+      background: #151515;
+      cursor: pointer;
+      transition: background .08s ease, border-color .08s ease;
+    }
+    .timelog-cell.o { background: #d95d25; border-color: #ee7540; }
+    .timelog-cell.i { background: #2d6faa; border-color: #4a8dcc; }
+    .timelog-cell.x { background: #59604f; border-color: #727c64; }
+    .timelog-cell.future-locked { opacity: .32; cursor: default; }
+
+    .timelog-stats {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .timelog-stat-row {
+      background: #181818;
+      border: 1px solid #292929;
+      border-radius: 10px;
+      padding: 11px 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      font-size: 13px;
+    }
+    .timelog-stat-label { color: #888; min-width: 64px; }
+    .timelog-stat-values { display: flex; gap: 12px; flex-wrap: wrap; }
+    .timelog-stat-values span { white-space: nowrap; }
+    .timelog-stat-o { color: #ff8a55; }
+    .timelog-stat-i { color: #69b4ff; }
+    .timelog-stat-x { color: #98a18d; }
+
+    .timelog-data-box {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid #222;
+    }
+    .timelog-data-title { font-size: 16px; color: #aaa; margin-bottom: 10px; }
+    .timelog-data-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .timelog-data-actions button { padding: 9px 12px; font-size: 13px; }
+    .timelog-data-actions .danger { color: #ff6b6b; border-color: rgba(255,85,85,.35); }
+    #timelogCsvInput { display: none; }
+
     @media (max-width: 600px) {
       header { padding: 14px 18px; }
       .session-time { font-size: 56px; }
@@ -757,6 +880,11 @@
       .timer-input { width: 58px; height: 56px; font-size: 20px; }
       .control-button { width: 62px; height: 62px; font-size: 20px; }
       .summary-card-value { font-size: 15px; }
+      .timelog-page { padding: 70px 12px 30px; }
+      .timelog-grid-wrap { padding: 10px 8px; }
+      .timelog-minutes-head, .timelog-row { grid-template-columns: 34px repeat(6, 1fr); gap: 3px; }
+      .timelog-cell { height: 23px; }
+      .timelog-date-label { min-width: 155px; font-size: 15px; }
     }
   </style>
 </head>
@@ -773,6 +901,7 @@
     <button class="menu-item" onclick="showOnIt()">On It</button>
     <button class="menu-item" onclick="showTimer()">Timer</button>
     <button class="menu-item" onclick="showRecords()">Records</button>
+    <button class="menu-item" onclick="showTimeLog()">Time Log</button>
     <button class="menu-item" onclick="showSettings()">Settings</button>
   </nav>
 
@@ -836,6 +965,51 @@
     </div>
 
     <div class="records-list" id="recordsList"></div>
+  </section>
+
+
+
+  <section class="timelog-page" id="timeLogPage" style="display: none;">
+    <div class="timelog-datebar">
+      <button onclick="changeTimeLogDate(-1)" aria-label="이전 날짜">‹</button>
+      <div class="timelog-date-label" id="timelogDateLabel"></div>
+      <button id="timelogNextBtn" onclick="changeTimeLogDate(1)" aria-label="다음 날짜">›</button>
+      <button onclick="goTimeLogToday()">오늘</button>
+    </div>
+
+    <div class="timelog-toolbar">
+      <button class="timelog-tool-o active" id="timelogToolO" onclick="setTimeLogTool('O')">O</button>
+      <button class="timelog-tool-i" id="timelogToolI" onclick="setTimeLogTool('I')">I</button>
+      <button class="timelog-tool-x" id="timelogToolX" onclick="setTimeLogTool('X')">X</button>
+      <button class="timelog-tool-erase" id="timelogToolErase" onclick="setTimeLogTool('')">🧽</button>
+    </div>
+
+    <div class="timelog-grid-wrap" id="timelogGrid"></div>
+
+    <div class="timelog-stats">
+      <div class="timelog-stat-row">
+        <span class="timelog-stat-label" id="timelogDayStatLabel">선택일</span>
+        <div class="timelog-stat-values" id="timelogDayStats"></div>
+      </div>
+      <div class="timelog-stat-row">
+        <span class="timelog-stat-label">이번 주</span>
+        <div class="timelog-stat-values" id="timelogWeekStats"></div>
+      </div>
+      <div class="timelog-stat-row">
+        <span class="timelog-stat-label">이번 달</span>
+        <div class="timelog-stat-values" id="timelogMonthStats"></div>
+      </div>
+    </div>
+
+    <div class="timelog-data-box">
+      <div class="timelog-data-title">데이터 관리</div>
+      <div class="timelog-data-actions">
+        <button onclick="exportTimeLogCSVs()">CSV 내보내기</button>
+        <button onclick="triggerTimeLogImport()">CSV 가져오기</button>
+        <button class="danger" onclick="clearAllTimeLogRecords()">전체 기록 삭제</button>
+      </div>
+      <input type="file" id="timelogCsvInput" accept=".csv" onchange="importTimeLogCSV(this)">
+    </div>
   </section>
 
   <section class="settings-page" id="settingsPage" style="display: none;">
@@ -1171,6 +1345,7 @@
       document.getElementById("onitPage").style.display = "none";
       document.getElementById("timerPage").style.display = "none";
       document.getElementById("recordsPage").style.display = "none";
+      document.getElementById("timeLogPage").style.display = "none";
       document.getElementById("settingsPage").style.display = "none";
     }
 
@@ -1206,6 +1381,14 @@
       document.getElementById("recordsPage").style.display = "block";
       document.getElementById("headerTitle").textContent = "Records";
       renderRecords();
+      closeMenu();
+    }
+
+    function showTimeLog() {
+      hideAllPages();
+      document.getElementById("timeLogPage").style.display = "block";
+      document.getElementById("headerTitle").textContent = "Time Log";
+      renderTimeLog();
       closeMenu();
     }
 
@@ -1994,6 +2177,288 @@
       };
       reader.readAsText(file);
     }
+
+
+
+    // ===== Time Log =====
+    const TIMELOG_KEY = "onItTimeLogRecords";
+    const TIMELOG_START_MIN = 7 * 60;
+    const TIMELOG_END_MIN = 24 * 60;
+    const TIMELOG_STEP = 10;
+    const TIMELOG_SLOTS = (TIMELOG_END_MIN - TIMELOG_START_MIN) / TIMELOG_STEP;
+    let timelogSelectedDate = new Date();
+    timelogSelectedDate.setHours(0, 0, 0, 0);
+    let timelogTool = "O";
+    let timelogPainting = false;
+
+    function timelogDateKey(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function timelogTodayKey() {
+      const d = new Date();
+      d.setHours(0,0,0,0);
+      return timelogDateKey(d);
+    }
+
+    function loadTimeLogData() {
+      try { return JSON.parse(localStorage.getItem(TIMELOG_KEY)) || {}; }
+      catch (_) { return {}; }
+    }
+
+    function saveTimeLogData(data) {
+      localStorage.setItem(TIMELOG_KEY, JSON.stringify(data));
+    }
+
+    function ensureTimeLogDay(data, key) {
+      if (!Array.isArray(data[key]) || data[key].length !== TIMELOG_SLOTS) {
+        data[key] = Array(TIMELOG_SLOTS).fill("");
+      }
+      return data[key];
+    }
+
+    function formatTimeLogDisplayDate(d) {
+      const days = ["일","월","화","수","목","금","토"];
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return `${y}. ${m}. ${day} (${days[d.getDay()]})`;
+    }
+
+    function setTimeLogTool(tool) {
+      timelogTool = tool;
+      ["O","I","X","Erase"].forEach(k => {
+        const el = document.getElementById("timelogTool" + k);
+        if (el) el.classList.remove("active");
+      });
+      const id = tool === "" ? "timelogToolErase" : "timelogTool" + tool;
+      const el = document.getElementById(id);
+      if (el) el.classList.add("active");
+    }
+
+    function changeTimeLogDate(delta) {
+      const next = new Date(timelogSelectedDate);
+      next.setDate(next.getDate() + delta);
+      const today = new Date(); today.setHours(0,0,0,0);
+      if (next > today) return;
+      timelogSelectedDate = next;
+      renderTimeLog();
+    }
+
+    function goTimeLogToday() {
+      timelogSelectedDate = new Date();
+      timelogSelectedDate.setHours(0,0,0,0);
+      renderTimeLog();
+    }
+
+    function timeLogSlotLabel(index) {
+      const mins = TIMELOG_START_MIN + index * TIMELOG_STEP;
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+    }
+
+    function paintTimeLogCell(index) {
+      const today = new Date(); today.setHours(0,0,0,0);
+      if (timelogSelectedDate > today) return;
+      const data = loadTimeLogData();
+      const key = timelogDateKey(timelogSelectedDate);
+      const arr = ensureTimeLogDay(data, key);
+      arr[index] = timelogTool;
+      saveTimeLogData(data);
+      const cell = document.querySelector(`.timelog-cell[data-index="${index}"]`);
+      if (cell) {
+        cell.classList.remove("o","i","x");
+        if (timelogTool) cell.classList.add(timelogTool.toLowerCase());
+      }
+      renderTimeLogStats();
+    }
+
+    function renderTimeLogGrid() {
+      const grid = document.getElementById("timelogGrid");
+      if (!grid) return;
+      const data = loadTimeLogData();
+      const key = timelogDateKey(timelogSelectedDate);
+      const arr = ensureTimeLogDay(data, key);
+      let html = '<div class="timelog-minutes-head"><div></div>' + [0,10,20,30,40,50].map(m => `<div>${String(m).padStart(2,"0")}</div>`).join('') + '</div>';
+      for (let h = 7; h <= 23; h++) {
+        html += `<div class="timelog-row"><div class="timelog-hour">${String(h).padStart(2,"0")}</div>`;
+        for (let m = 0; m < 60; m += 10) {
+          const index = ((h * 60 + m) - TIMELOG_START_MIN) / TIMELOG_STEP;
+          const v = arr[index] || "";
+          html += `<div class="timelog-cell ${v ? v.toLowerCase() : ''}" data-index="${index}" title="${timeLogSlotLabel(index)}"></div>`;
+        }
+        html += '</div>';
+      }
+      grid.innerHTML = html;
+
+      grid.querySelectorAll('.timelog-cell').forEach(cell => {
+        const idx = Number(cell.dataset.index);
+        cell.addEventListener('pointerdown', e => {
+          e.preventDefault();
+          timelogPainting = true;
+          try { cell.setPointerCapture(e.pointerId); } catch (_) {}
+          paintTimeLogCell(idx);
+        });
+        cell.addEventListener('pointerenter', e => {
+          if (timelogPainting && (e.buttons || e.pointerType === 'touch')) paintTimeLogCell(idx);
+        });
+        cell.addEventListener('pointermove', e => {
+          if (!timelogPainting) return;
+          const target = document.elementFromPoint(e.clientX, e.clientY);
+          if (target && target.classList && target.classList.contains('timelog-cell')) {
+            paintTimeLogCell(Number(target.dataset.index));
+          }
+        });
+      });
+    }
+
+    document.addEventListener('pointerup', () => { timelogPainting = false; });
+    document.addEventListener('pointercancel', () => { timelogPainting = false; });
+
+    function getTimeLogRangeTotals(startDate, endDate) {
+      const data = loadTimeLogData();
+      const totals = { O: 0, I: 0, X: 0 };
+      const d = new Date(startDate); d.setHours(0,0,0,0);
+      const end = new Date(endDate); end.setHours(0,0,0,0);
+      while (d <= end) {
+        const arr = data[timelogDateKey(d)] || [];
+        arr.forEach(v => { if (totals[v] !== undefined) totals[v] += TIMELOG_STEP; });
+        d.setDate(d.getDate() + 1);
+      }
+      return totals;
+    }
+
+    function timelogHours(mins) { return (mins / 60).toFixed(1) + "시간"; }
+
+    function timelogStatsHtml(t) {
+      return `<span class="timelog-stat-o">O ${timelogHours(t.O)}</span><span class="timelog-stat-i">I ${timelogHours(t.I)}</span><span class="timelog-stat-x">X ${timelogHours(t.X)}</span>`;
+    }
+
+    function renderTimeLogStats() {
+      const d = new Date(timelogSelectedDate);
+      const dayTotals = getTimeLogRangeTotals(d, d);
+      const dow = d.getDay();
+      const diff = dow === 0 ? -6 : 1 - dow;
+      const mon = new Date(d); mon.setDate(d.getDate() + diff);
+      const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+      const monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
+      const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+      document.getElementById('timelogDayStatLabel').textContent = `${d.getMonth()+1}/${d.getDate()}`;
+      document.getElementById('timelogDayStats').innerHTML = timelogStatsHtml(dayTotals);
+      document.getElementById('timelogWeekStats').innerHTML = timelogStatsHtml(getTimeLogRangeTotals(mon, sun));
+      document.getElementById('timelogMonthStats').innerHTML = timelogStatsHtml(getTimeLogRangeTotals(monthStart, monthEnd));
+    }
+
+    function renderTimeLog() {
+      const label = document.getElementById('timelogDateLabel');
+      if (!label) return;
+      label.textContent = formatTimeLogDisplayDate(timelogSelectedDate);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const nextBtn = document.getElementById('timelogNextBtn');
+      if (nextBtn) nextBtn.disabled = timelogSelectedDate >= today;
+      renderTimeLogGrid();
+      renderTimeLogStats();
+    }
+
+    function timeLogDownload(filename, csv) {
+      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function exportTimeLogCSVs() {
+      const data = loadTimeLogData();
+      const keys = Object.keys(data).filter(k => Array.isArray(data[k])).sort();
+      if (keys.length === 0) { alert('내보낼 타임로그 기록이 없습니다.'); return; }
+      const header = ['Date', ...Array.from({length: TIMELOG_SLOTS}, (_,i) => timeLogSlotLabel(i))];
+      let detailed = header.join(',') + '\n';
+      keys.forEach(k => { detailed += [k, ...ensureTimeLogDay(data, k)].join(',') + '\n'; });
+
+      const first = new Date(keys[0] + 'T00:00:00');
+      const today = new Date(); today.setHours(0,0,0,0);
+      const last = new Date(Math.max(new Date(keys[keys.length-1] + 'T00:00:00').getTime(), today.getTime()));
+      let monthly = 'Month,O Total Hours,I Total Hours,X Total Hours,O Daily Avg,I Daily Avg,O+I Daily Avg,X Daily Avg,O Max Day,I Max Day,X Max Day,O 3h Goal Days,I 2h Goal Days\n';
+      let cursor = new Date(first.getFullYear(), first.getMonth(), 1);
+      while (cursor <= last) {
+        const y = cursor.getFullYear(), m = cursor.getMonth();
+        const monthStart = new Date(y, m, 1);
+        const calendarEnd = new Date(y, m+1, 0);
+        let effectiveEnd = calendarEnd;
+        if (y === today.getFullYear() && m === today.getMonth()) effectiveEnd = today;
+        if (monthStart > today) break;
+        const divisor = effectiveEnd.getDate();
+        let totals = {O:0,I:0,X:0}, max = {O:0,I:0,X:0}, oGoal=0, iGoal=0;
+        const d = new Date(monthStart);
+        while (d <= effectiveEnd) {
+          const dayT = getTimeLogRangeTotals(d, d);
+          ['O','I','X'].forEach(k => { totals[k]+=dayT[k]; max[k]=Math.max(max[k],dayT[k]); });
+          if (dayT.O >= 180) oGoal++;
+          if (dayT.I >= 120) iGoal++;
+          d.setDate(d.getDate()+1);
+        }
+        const monthKey = `${y}-${String(m+1).padStart(2,'0')}`;
+        const h = v => (v/60).toFixed(1);
+        monthly += [monthKey,h(totals.O),h(totals.I),h(totals.X),h(totals.O/divisor),h(totals.I/divisor),h((totals.O+totals.I)/divisor),h(totals.X/divisor),h(max.O),h(max.I),h(max.X),oGoal,iGoal].join(',') + '\n';
+        cursor = new Date(y, m+1, 1);
+      }
+      const stamp = timelogTodayKey();
+      timeLogDownload(`ONIT_Timelog_${stamp}.csv`, detailed);
+      setTimeout(() => timeLogDownload(`ONIT_Timelog_Monthly_${stamp}.csv`, monthly), 250);
+    }
+
+    function triggerTimeLogImport() { document.getElementById('timelogCsvInput').click(); }
+
+    function importTimeLogCSV(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const text = String(e.target.result || '').replace(/^\uFEFF/, '');
+        const lines = text.split(/\r?\n/).filter(Boolean);
+        if (lines.length < 2) { alert('유효한 타임로그 CSV가 아닙니다.'); input.value=''; return; }
+        const header = lines[0].split(',').map(v => v.trim());
+        if (header[0] !== 'Date' || header.length !== TIMELOG_SLOTS + 1 || header[1] !== '07:00' || header[header.length-1] !== '23:50') {
+          alert('타임로그 상세 CSV 형식이 아닙니다.'); input.value=''; return;
+        }
+        const data = loadTimeLogData();
+        let count = 0;
+        for (let i=1;i<lines.length;i++) {
+          const parts = lines[i].split(',');
+          if (parts.length < TIMELOG_SLOTS + 1) continue;
+          const date = parts[0].trim();
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+          const arr = parts.slice(1, TIMELOG_SLOTS+1).map(v => { const x=v.trim().toUpperCase(); return ['O','I','X'].includes(x) ? x : ''; });
+          data[date] = arr;
+          count++;
+        }
+        if (!count) { alert('불러올 수 있는 기록이 없습니다.'); input.value=''; return; }
+        saveTimeLogData(data);
+        renderTimeLog();
+        alert(`${count}일의 타임로그를 불러왔습니다. 동일 날짜는 가져온 기록으로 덮어썼습니다.`);
+        input.value='';
+      };
+      reader.readAsText(file);
+    }
+
+    function clearAllTimeLogRecords() {
+      const data = loadTimeLogData();
+      if (Object.keys(data).length === 0) { alert('삭제할 타임로그 기록이 없습니다.'); return; }
+      if (!confirm('타임로그 기록을 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.')) return;
+      localStorage.removeItem(TIMELOG_KEY);
+      renderTimeLog();
+      alert('타임로그 기록이 모두 삭제되었습니다.');
+    }
+
 
     window.addEventListener("DOMContentLoaded", () => {
       initPWA();
