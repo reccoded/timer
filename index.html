@@ -1033,6 +1033,53 @@
         font-size: 11px !important;
       }
     }
+  
+    @media (max-width: 700px) {
+      /* Time Log 상단 날짜줄: Windows/넓은 화면은 그대로 두고 모바일만 압축 */
+      .timelog-datebar {
+        justify-content: flex-start;
+        padding-right: 92px;
+        gap: 8px;
+      }
+
+      .timelog-date-label {
+        min-width: 0 !important;
+        flex: 0 1 auto;
+        font-size: 15px;
+      }
+
+      .timelog-datebar > button:not(.timelog-image-save-inline) {
+        flex: 0 0 auto;
+      }
+
+      .timelog-image-save-inline {
+        right: 0;
+        padding: 6px 8px !important;
+        font-size: 11px !important;
+      }
+
+      /* 모바일 통계: 평균/합계를 모두 좌측 정렬 */
+      .timelog-stat-values {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .timelog-stat-average,
+      .timelog-stat-total {
+        margin-left: 0 !important;
+        justify-content: flex-start;
+        width: 100%;
+        gap: 12px;
+      }
+
+      .timelog-stat-total {
+        margin-left: 0 !important;
+      }
+    }
+
   </style>
 </head>
 
