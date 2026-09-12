@@ -873,6 +873,120 @@
     .timelog-data-actions .danger { color: #ff6b6b; border-color: rgba(255,85,85,.35); }
     #timelogCsvInput { display: none; }
 
+    /* ===== Refined Focus UI: On It + Timer running ===== */
+    .session-time,
+    .timer-remaining {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      font-weight: 300;
+      text-shadow: 0 2px 14px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.95);
+    }
+
+    .session-time {
+      font-size: clamp(64px, 8vw, 104px);
+      margin-bottom: 18px;
+    }
+
+    .timer-remaining {
+      font-size: clamp(64px, 8vw, 104px);
+      margin-bottom: 18px;
+    }
+
+    .focus-subinfo {
+      margin-bottom: 30px;
+      color: rgba(255,255,255,.92);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      text-shadow:
+        0 1px 2px rgba(0,0,0,1),
+        0 2px 8px rgba(0,0,0,.98),
+        0 0 1px rgba(0,0,0,1);
+    }
+
+    .timer-phase-info {
+      margin-bottom: 30px;
+      color: rgba(255,255,255,.92);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: .14em;
+      text-shadow:
+        0 1px 2px rgba(0,0,0,1),
+        0 2px 8px rgba(0,0,0,.98),
+        0 0 1px rgba(0,0,0,1);
+    }
+
+    .controls {
+      gap: 12px;
+      padding: 8px;
+      margin-top: 0;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      background: rgba(9,9,9,.34);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.24);
+    }
+
+    .control-button {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.055);
+      box-shadow: none;
+      color: rgba(255,255,255,.92);
+      font-size: 19px;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease;
+    }
+
+    .control-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.24);
+      background: rgba(255,255,255,.10);
+      box-shadow: none;
+    }
+
+    .control-button:active {
+      transform: scale(.97);
+      box-shadow: none;
+    }
+
+    .control-button.active-glow-play {
+      border-color: rgba(255,210,72,.68);
+      background: rgba(255,204,56,.10);
+      color: #ffd95a;
+      box-shadow: 0 0 18px rgba(255,210,72,.18);
+    }
+
+    .control-button.active-glow-pause {
+      border-color: rgba(92,195,255,.68);
+      background: rgba(76,184,255,.10);
+      color: #77d0ff;
+      box-shadow: 0 0 18px rgba(76,184,255,.18);
+    }
+
+
+    /* Timer setup: keep the standalone play control visible even on bright backgrounds. */
+    .timer-setup-play {
+      background: rgba(10,10,10,.62);
+      border-color: rgba(255,255,255,.34);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,.52), 0 0 0 1px rgba(0,0,0,.28);
+      text-shadow: 0 1px 3px rgba(0,0,0,1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .timer-setup-play:hover {
+      background: rgba(18,18,18,.72);
+      border-color: rgba(255,255,255,.48);
+      box-shadow: 0 6px 18px rgba(0,0,0,.58), 0 0 0 1px rgba(0,0,0,.32);
+    }
+
     @media (max-width: 600px) {
       header { padding: 14px 18px; }
       .session-time { font-size: 56px; }
@@ -911,9 +1025,8 @@
       <div class="tag-chips" id="onitTagChips"></div>
     </div>
 
-    <div class="session-time background-readable" id="sessionTime">0:00</div>
-    <div class="total-label background-readable">Total</div>
-    <div class="total-time background-readable" id="totalTime">0:00</div>
+    <div class="session-time background-readable" id="sessionTime">00:00:00</div>
+    <div class="focus-subinfo background-readable" id="totalTime">TODAY · 0.0h</div>
 
     <div class="controls">
       <button class="control-button" id="onitPlayBtn" onclick="startSession()">▶</button>
@@ -1067,7 +1180,7 @@
         background_color: "#111111",
         theme_color: "#111111",
         icons: [{
-          src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23111'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-size='50' font-family='sans-serif'>O</text></svg>",
+          src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230b0b0b'/><text x='50' y='53' text-anchor='middle' font-family='Arial,sans-serif' font-size='25' font-weight='700' letter-spacing='1'><tspan fill='%23ffffff'>ON </tspan><tspan fill='%23ff6a2a'>IT</tspan></text><rect x='31' y='66' width='38' height='4' rx='2' fill='%23ff6a2a'/></svg>",
           sizes: "192x192 512x512",
           type: "image/svg+xml"
         }]
@@ -1078,7 +1191,7 @@
 
       if ("serviceWorker" in navigator) {
         const swCode = `
-          const CACHE_NAME = 'onit-v39-cache';
+          const CACHE_NAME = 'onit-v40-cache';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(clients.claim()));
           self.addEventListener('fetch', e => {
@@ -1185,7 +1298,13 @@
       seconds = Math.max(0, Math.floor(Number(seconds) || 0));
       const hours = Math.floor(seconds / 3600);
       const minutes = Math.floor((seconds % 3600) / 60);
-      return `${hours}:${String(minutes).padStart(2, "0")}`;
+      const secs = seconds % 60;
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function formatTodayHours(seconds) {
+      seconds = Math.max(0, Number(seconds) || 0);
+      return `TODAY · ${(seconds / 3600).toFixed(1)}h`;
     }
 
     function formatRecordText(seconds) {
@@ -1450,7 +1569,7 @@
         todayTotal += (currentSession - sessionSeconds);
       }
 
-      document.getElementById("totalTime").textContent = formatOnIt(todayTotal);
+      document.getElementById("totalTime").textContent = formatTodayHours(todayTotal);
     }
 
     function startSession() {
@@ -1610,7 +1729,7 @@
           <button class="preset-add-btn" onclick="addCurrentAsPreset()">+ 현재 설정 저장</button>
         </div>
 
-        <button class="control-button" onclick="startTimerSetup()">▶</button>
+        <button class="control-button timer-setup-play" onclick="startTimerSetup()">▶</button>
       `;
     }
 
