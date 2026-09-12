@@ -768,7 +768,18 @@
       justify-content: center;
       gap: 10px;
       margin-bottom: 14px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      position: relative;
+    }
+
+    .timelog-image-save-inline {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 8px 11px !important;
+      font-size: 12px !important;
+      white-space: nowrap;
     }
 
     .timelog-datebar button,
@@ -857,9 +868,25 @@
       font-size: 13px;
     }
     .timelog-stat-label { color: #888; min-width: 64px; }
-    .timelog-stat-values { display: flex; gap: 12px; flex-wrap: wrap; }
+    .timelog-stat-values {
+      display: flex;
+      gap: 12px;
+      flex: 1 1 auto;
+      min-width: 0;
+      flex-wrap: wrap;
+      align-items: center;
+    }
     .timelog-stat-values span { white-space: nowrap; }
-    .timelog-stat-o { color: #ff8a55; }
+    .timelog-stat-average, .timelog-stat-total {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .timelog-stat-average { margin-left: 2px; }
+    .timelog-stat-total { margin-left: auto; }
+    .timelog-stat-average-label, .timelog-stat-total-label { color: #ddd; }
+.timelog-stat-o { color: #ff8a55; }
     .timelog-stat-i { color: #69b4ff; }
     .timelog-stat-x { color: #98a18d; }
 
@@ -1001,6 +1028,10 @@
       .timelog-minutes-head, .timelog-row { grid-template-columns: 34px repeat(6, 1fr) 34px; gap: 3px; }
       .timelog-cell { height: 23px; }
       .timelog-date-label { min-width: 155px; font-size: 15px; }
+      .timelog-image-save-inline {
+        padding: 6px 8px !important;
+        font-size: 11px !important;
+      }
     }
   </style>
 </head>
@@ -1090,6 +1121,7 @@
       <div class="timelog-date-label" id="timelogDateLabel"></div>
       <button id="timelogNextBtn" onclick="changeTimeLogDate(1)" aria-label="다음 날짜">›</button>
       <button onclick="goTimeLogToday()">오늘</button>
+      <button class="timelog-image-save-inline" onclick="saveTimeLogImage()">이미지 저장</button>
     </div>
 
     <div class="timelog-toolbar">
@@ -2364,12 +2396,14 @@
     }
 
     function setTimeLogTool(tool) {
-      timelogTool = tool;
+      const nextTool = timelogTool === tool ? null : tool;
+      timelogTool = nextTool;
       ["O","I","X","Erase"].forEach(k => {
         const el = document.getElementById("timelogTool" + k);
         if (el) el.classList.remove("active");
       });
-      const id = tool === "ERASE" ? "timelogToolErase" : "timelogTool" + tool;
+      if (nextTool === null) return;
+      const id = nextTool === "ERASE" ? "timelogToolErase" : "timelogTool" + nextTool;
       const el = document.getElementById(id);
       if (el) el.classList.add("active");
     }
@@ -2475,8 +2509,25 @@
       return `<span class="timelog-stat-o">${timelogHours(t.O)}</span><span class="timelog-stat-i">${timelogHours(t.I)}</span><span class="timelog-stat-x">${timelogHours(t.X)}</span>`;
     }
 
+    function timelogTotalHtml(t) {
+      return `<div class="timelog-stat-total"><span class="timelog-stat-total-label">합계</span>${timelogStatsHtml(t)}</div>`;
+    }
+
+    function timelogAverageHtml(t, days) {
+      const divisor = Math.max(1, days);
+      const avg = { O: t.O / divisor, I: t.I / divisor, X: t.X / divisor };
+      return `<div class="timelog-stat-average"><span class="timelog-stat-average-label">평균</span>${timelogStatsHtml(avg)}</div>${timelogTotalHtml(t)}`;
+    }
+
+    function timelogInclusiveDays(startDate, endDate) {
+      const a = new Date(startDate); a.setHours(0,0,0,0);
+      const b = new Date(endDate); b.setHours(0,0,0,0);
+      return Math.max(1, Math.round((b - a) / 86400000) + 1);
+    }
+
     function renderTimeLogStats() {
-      const d = new Date(timelogSelectedDate);
+      const d = new Date(timelogSelectedDate); d.setHours(0,0,0,0);
+      const today = new Date(); today.setHours(0,0,0,0);
       const dayTotals = getTimeLogRangeTotals(d, d);
       const dow = d.getDay();
       const diff = dow === 0 ? -6 : 1 - dow;
@@ -2484,10 +2535,18 @@
       const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
       const monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
       const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+
+      const weekEffectiveEnd = sun < today ? sun : today;
+      const monthEffectiveEnd = monthEnd < today ? monthEnd : today;
+      const weekTotals = getTimeLogRangeTotals(mon, weekEffectiveEnd);
+      const monthTotals = getTimeLogRangeTotals(monthStart, monthEffectiveEnd);
+      const weekDays = timelogInclusiveDays(mon, weekEffectiveEnd);
+      const monthDays = timelogInclusiveDays(monthStart, monthEffectiveEnd);
+
       document.getElementById('timelogDayStatLabel').textContent = `${d.getMonth()+1}/${d.getDate()}`;
-      document.getElementById('timelogDayStats').innerHTML = timelogStatsHtml(dayTotals);
-      document.getElementById('timelogWeekStats').innerHTML = timelogStatsHtml(getTimeLogRangeTotals(mon, sun));
-      document.getElementById('timelogMonthStats').innerHTML = timelogStatsHtml(getTimeLogRangeTotals(monthStart, monthEnd));
+      document.getElementById('timelogDayStats').innerHTML = timelogTotalHtml(dayTotals);
+      document.getElementById('timelogWeekStats').innerHTML = timelogAverageHtml(weekTotals, weekDays);
+      document.getElementById('timelogMonthStats').innerHTML = timelogAverageHtml(monthTotals, monthDays);
     }
 
     function renderTimeLog() {
@@ -2499,6 +2558,85 @@
       if (nextBtn) nextBtn.disabled = timelogSelectedDate >= today;
       renderTimeLogGrid();
       renderTimeLogStats();
+    }
+
+    function saveTimeLogImage() {
+      const data = loadTimeLogData();
+      const key = timelogDateKey(timelogSelectedDate);
+      const arr = data[key] || Array(TIMELOG_SLOTS).fill("");
+
+      const cols = 6;
+      const rows = 17;
+      const cellW = 96;
+      const cellH = 42;
+      const gap = 6;
+      const pad = 18;
+      const hourW = 48;
+      const headerH = 28;
+
+      const width = pad * 2 + hourW * 2 + cols * cellW + (cols + 1) * gap;
+      const height = pad * 2 + headerH + rows * cellH + rows * gap;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#0f0f0f';
+      ctx.fillRect(0, 0, width, height);
+
+      const gridX = pad + hourW + gap;
+      const gridY = pad + headerH;
+
+      // 상단 분 눈금: 10, 20, 30, 40, 50, 60
+      ctx.fillStyle = '#8f8f8f';
+      ctx.font = '16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      [10,20,30,40,50,60].forEach((m, c) => {
+        const x = gridX + c * (cellW + gap) + cellW / 2;
+        ctx.fillText(String(m), x, pad + headerH / 2);
+      });
+
+      const colors = { O: '#d95d25', I: '#2d6faa', X: '#59604f', '': '#151515' };
+
+      for (let r = 0; r < rows; r++) {
+        const hour = 7 + r;
+        const y = gridY + r * (cellH + gap);
+
+        // 좌우 시간 숫자
+        ctx.fillStyle = '#8f8f8f';
+        ctx.font = '16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.textBaseline = 'middle';
+
+        ctx.textAlign = 'right';
+        ctx.fillText(String(hour).padStart(2, '0'), pad + hourW - 6, y + cellH / 2);
+
+        ctx.textAlign = 'left';
+        const rightLabelX = gridX + cols * cellW + (cols - 1) * gap + gap + 6;
+        ctx.fillText(String(hour).padStart(2, '0'), rightLabelX, y + cellH / 2);
+
+        // 색칠 칸
+        for (let c = 0; c < cols; c++) {
+          const index = r * cols + c;
+          const v = arr[index] || '';
+          const x = gridX + c * (cellW + gap);
+          ctx.fillStyle = colors[v] || colors[''];
+          ctx.fillRect(x, y, cellW, cellH);
+        }
+      }
+
+      canvas.toBlob(blob => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${key}.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }, 'image/png');
     }
 
     function timeLogDownload(filename, csv) {
