@@ -1080,6 +1080,14 @@
       }
     }
 
+.side-menu button.menu-item{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-weight:500;letter-spacing:.045em}
+.todo-page{min-height:100vh;padding:80px 24px 40px;max-width:700px;margin:0 auto}.todo-add-row{display:flex;gap:8px;margin-bottom:22px}.todo-add-row input{flex:1;min-width:0;padding:12px 14px;border-radius:9px;border:1px solid #333;background:#181818;color:#fff;font-size:15px;outline:none}.todo-add-row button,.todo-actions button{border:1px solid #333;background:#1c1c1c;color:#fff;border-radius:8px;cursor:pointer}.todo-add-row button{padding:11px 16px}.todo-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #222}.todo-text{flex:1;min-width:0;word-break:break-word}.todo-actions{display:flex;gap:8px}.todo-actions button{min-width:38px;padding:7px 9px}.todo-complete-btn{color:#9fd6a8!important}.todo-delete-btn{color:#aaa!important}.todo-history-title{color:#aaa;font-size:15px;margin:32px 0 8px}.todo-history-item{display:grid;grid-template-columns:105px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid #1c1c1c;font-size:14px}.todo-history-date{color:#777}.todo-empty{color:#666;text-align:center;padding:24px 0;font-size:14px}.settings-option button.backup-danger{color:#ff6b6b;border-color:rgba(255,85,85,.35)}#backupJsonInput{display:none}
+
+
+    .todo-history-details { margin-top: 30px; }
+    .todo-history-details > summary { cursor: pointer; user-select: none; list-style-position: outside; }
+    .todo-history-details[open] > summary { margin-bottom: 8px; }
+
   </style>
 </head>
 
@@ -1094,8 +1102,9 @@
     <button class="menu-close-btn" onclick="closeMenu()">✕</button>
     <button class="menu-item" onclick="showOnIt()">On It</button>
     <button class="menu-item" onclick="showTimer()">Timer</button>
-    <button class="menu-item" onclick="showRecords()">Records</button>
-    <button class="menu-item" onclick="showTimeLog()">Time Log</button>
+    <button class="menu-item" onclick="showRecords()">History</button>
+    <button class="menu-item" onclick="showTimeLog()">Day Log</button>
+    <button class="menu-item" onclick="showTodo()">TODO</button>
     <button class="menu-item" onclick="showSettings()">Settings</button>
   </nav>
 
@@ -1206,7 +1215,15 @@
     </div>
   </section>
 
+  <section class="todo-page" id="todoPage" style="display: none;"><div class="todo-add-row"><input type="text" id="todoInput" placeholder="할 일 입력..." onkeydown="if(event.key==='Enter') addTodo()"><button onclick="addTodo()">추가</button></div><div id="todoList"></div>
+    <details class="todo-history-details">
+      <summary class="todo-history-title">완료 기록</summary>
+      <div id="todoHistory"></div>
+    </details></section>
+
   <section class="settings-page" id="settingsPage" style="display: none;">
+    <div class="settings-section"><div class="settings-title">통합 기록 백업</div><div class="settings-option"><div class="settings-option-label">전체 기록 백업</div><button onclick="exportBackupJSON()">JSON 내보내기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 복원</div><button onclick="triggerBackupJSONImport()">JSON 불러오기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 초기화</div><button class="backup-danger" onclick="clearIntegratedRecords()">초기화</button></div><div class="settings-current">History · Day Log · TODO 현재 목록 · TODO 완료 기록</div><input type="file" id="backupJsonInput" accept=".json,application/json" onchange="importBackupJSON(this)"></div>
+
     <div class="settings-section">
       <div class="settings-title">작업 태그 관리</div>
       <div class="tag-manage-box">
@@ -1519,6 +1536,7 @@
       document.getElementById("timerPage").style.display = "none";
       document.getElementById("recordsPage").style.display = "none";
       document.getElementById("timeLogPage").style.display = "none";
+      document.getElementById("todoPage").style.display = "none";
       document.getElementById("settingsPage").style.display = "none";
     }
 
@@ -1552,7 +1570,7 @@
     function showRecords() {
       hideAllPages();
       document.getElementById("recordsPage").style.display = "block";
-      document.getElementById("headerTitle").textContent = "Records";
+      document.getElementById("headerTitle").textContent = "HISTORY";
       renderRecords();
       closeMenu();
     }
@@ -1560,7 +1578,7 @@
     function showTimeLog() {
       hideAllPages();
       document.getElementById("timeLogPage").style.display = "block";
-      document.getElementById("headerTitle").textContent = "Time Log";
+      document.getElementById("headerTitle").textContent = "DAY LOG";
       timelogTool = null;
       ["O","I","X","Erase"].forEach(k => {
         const el = document.getElementById("timelogTool" + k);
@@ -1569,6 +1587,8 @@
       renderTimeLog();
       closeMenu();
     }
+
+    function showTodo(){hideAllPages();document.getElementById("todoPage").style.display="block";document.getElementById("headerTitle").textContent="TODO";renderTodo();closeMenu();}
 
     function showSettings() {
       hideAllPages();
@@ -2393,6 +2413,20 @@
     }
 
 
+
+
+    const TODO_KEY="onItTodoItems",TODO_HISTORY_KEY="onItTodoCompleted";
+    function loadTodoItems(){try{return JSON.parse(localStorage.getItem(TODO_KEY))||[]}catch(_){return[]}}
+    function loadTodoCompleted(){try{return JSON.parse(localStorage.getItem(TODO_HISTORY_KEY))||[]}catch(_){return[]}}
+    function todoEsc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+    function addTodo(){const i=document.getElementById("todoInput");if(!i)return;const x=i.value.trim();if(!x)return;const a=loadTodoItems();a.push({id:Date.now()+Math.floor(Math.random()*1000),text:x});localStorage.setItem(TODO_KEY,JSON.stringify(a));i.value="";renderTodo();i.focus()}
+    function deleteTodo(id){localStorage.setItem(TODO_KEY,JSON.stringify(loadTodoItems().filter(x=>x.id!==id)));renderTodo()}
+    function completeTodo(id){const a=loadTodoItems(),x=a.find(v=>v.id===id);if(!x)return;const h=loadTodoCompleted();h.unshift({id:Date.now()+Math.floor(Math.random()*1000),date:getToday(),text:x.text});localStorage.setItem(TODO_KEY,JSON.stringify(a.filter(v=>v.id!==id)));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(h));renderTodo()}
+    function renderTodo(){const l=document.getElementById("todoList"),h=document.getElementById("todoHistory");if(!l||!h)return;const a=loadTodoItems();l.innerHTML=a.length?a.map(x=>`<div class="todo-item"><div class="todo-text">${todoEsc(x.text)}</div><div class="todo-actions"><button class="todo-complete-btn" onclick="completeTodo(${Number(x.id)})">✓</button><button class="todo-delete-btn" onclick="deleteTodo(${Number(x.id)})">✕</button></div></div>`).join(""):`<div class="todo-empty">할 일이 없습니다.</div>`;const c=loadTodoCompleted();h.innerHTML=c.length?c.map(x=>`<div class="todo-history-item"><div class="todo-history-date">${todoEsc(x.date)}</div><div>${todoEsc(x.text)}</div></div>`).join(""):`<div class="todo-empty">완료 기록이 없습니다.</div>`}
+    function exportBackupJSON(){const b={format:"OnItRecordsBackup",version:1,exportedAt:new Date().toISOString(),records:JSON.parse(localStorage.getItem("onItRecords"))||[],timeLog:loadTimeLogData(),todo:loadTodoItems(),todoCompleted:loadTodoCompleted()};const u=URL.createObjectURL(new Blob([JSON.stringify(b,null,2)],{type:"application/json;charset=utf-8;"})),a=document.createElement("a");a.href=u;a.download=`OnIt_Backup_${getToday().replace(/\./g,"-")}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+    function triggerBackupJSONImport(){document.getElementById("backupJsonInput").click()}
+    function importBackupJSON(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(String(e.target.result||""));if(!d||d.format!=="OnItRecordsBackup"||!Array.isArray(d.records)||!d.timeLog||typeof d.timeLog!=="object"||!Array.isArray(d.todo)||!Array.isArray(d.todoCompleted))throw 0;if(!confirm("현재 History, Day Log, TODO 기록을 백업 파일의 내용으로 교체할까요?")){input.value="";return}localStorage.setItem("onItRecords",JSON.stringify(d.records));localStorage.setItem(TIMELOG_KEY,JSON.stringify(d.timeLog));localStorage.setItem(TODO_KEY,JSON.stringify(d.todo));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(d.todoCompleted));updateDisplay();alert("전체 기록을 복원했습니다.")}catch(_){alert("올바른 On It 통합 백업 JSON 파일이 아닙니다.")}input.value=""};r.readAsText(f)}
+    function clearIntegratedRecords(){if(!confirm("History, Day Log, TODO 현재 목록과 완료 기록을 모두 초기화할까요?\n작업 태그, Timer 프리셋, 알람, 배경사진 등 설정은 유지됩니다."))return;localStorage.removeItem("onItRecords");localStorage.removeItem(TIMELOG_KEY);localStorage.removeItem(TODO_KEY);localStorage.removeItem(TODO_HISTORY_KEY);updateDisplay();renderTodo();alert("기록 데이터만 모두 초기화했습니다.")}
 
     // ===== Time Log =====
     const TIMELOG_KEY = "onItTimeLogRecords";
