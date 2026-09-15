@@ -23,7 +23,7 @@
     html, body {
       margin: 0;
       min-height: 100%;
-      background: #111;
+      background: #f3eee4;
       color: #fff;
       font-family: var(--font-main);
     }
@@ -1088,6 +1088,139 @@
     .todo-history-details > summary { cursor: pointer; user-select: none; list-style-position: outside; }
     .todo-history-details[open] > summary { margin-bottom: 8px; }
 
+  
+
+    /* ===== Warm light information pages (ON IT / TIMER internals intentionally untouched) ===== */
+    :root { --warm-bg:#f3eee4; --warm-panel:#fbf8f1; --warm-panel-2:#e9e0d2; --warm-text:#292721; --warm-muted:#706b61; --warm-line:#d6cdbf; --warm-accent:#9a5c28; --warm-danger:#a13f3f; }
+    .onit-page, .timer-page { background-color: var(--warm-bg); }
+
+    .side-menu { background:#f4eee3; border-right:1px solid #d4cab9; box-shadow:6px 0 22px rgba(56,45,28,.12); }
+    .side-menu button.menu-item { color:#2d2a24; }
+    .side-menu button.menu-item:hover { background:#e7ddcd; }
+    .menu-close-btn { color:#716a5e; }
+    .menu-close-btn:hover { color:#2d2a24; }
+
+    .records-page, .timelog-page, .todo-page, .settings-page { background:var(--warm-bg); color:var(--warm-text); }
+    body:has(#recordsPage[style*="block"]) .menu-button,
+    body:has(#timeLogPage[style*="block"]) .menu-button,
+    body:has(#todoPage[style*="block"]) .menu-button,
+    body:has(#settingsPage[style*="block"]) .menu-button { color:#2d2a24; text-shadow:none; }
+
+    /* History */
+    .records-page .records-toolbar button,
+    .records-page .tag-filter-select { background:var(--warm-panel); color:var(--warm-text); border-color:var(--warm-line); }
+    .records-page .records-toolbar button:hover { background:#eee6da; }
+    .records-page .records-toolbar button.btn-reset { background:#f7e8e6; color:var(--warm-danger); border-color:#d8aaa5; }
+    .records-page .records-toolbar button.btn-reset:hover { background:#f1d9d6; border-color:#c9867f; }
+    .records-page .summary-card { background:var(--warm-panel-2); border-color:#d7c8b4; box-shadow:0 3px 12px rgba(70,53,30,.06); }
+    .records-page .summary-card-label { color:#71695e; }
+    .records-page .summary-card-value { color:var(--warm-accent); font-weight:700; font-size:20px; }
+    .records-page #todayTotalValue { color:#c64f1c; }
+    .records-page .ratio-stats-box { background:var(--warm-panel); border-color:var(--warm-line); }
+    .records-page .ratio-stats-box details summary { color:#5f594f; }
+    .records-page .ratio-stats-box details summary:hover { color:#28251f; }
+    .records-page .ratio-info-row { color:#4f4a42; }
+    .records-page .ratio-bar-bg { background:#ddd4c7; }
+    .records-page .ratio-bar-fill { background:#8e7b62; }
+    .records-page .filter-options-row { color:#5f5a51; }
+    .records-page .record-date-container { border-color:#d9d0c3; }
+    .records-page .record-date { color:#615b52; }
+    .records-page .record-date-total { color:#716a60; }
+    .records-page .record-item { background:var(--warm-panel); border:1px solid var(--warm-line); border-radius:13px; padding:13px 14px; margin-bottom:9px; box-shadow:0 2px 8px rgba(67,51,31,.04); }
+    .records-page .record-type { color:#514b42; background:#e8dfd1; border:1px solid #d6cbbb; }
+    .records-page .record-memo { color:#4a463f; background:#eee7dc; }
+    .records-page .record-actions { gap:7px; }
+    .records-page .record-actions button { width:34px; height:34px; padding:0; border:1px solid #d5cabc; border-radius:10px; background:#f1eadf; color:#655e54; font-size:16px; }
+    .records-page .record-actions button:hover { color:#2e2a24; background:#e7ddcf; }
+    .records-page .empty-records { color:#746e64; }
+
+    /* Day Log */
+    .timelog-page .timelog-datebar button, .timelog-page .timelog-data-actions button { background:var(--warm-panel); color:var(--warm-text); border-color:var(--warm-line); }
+    .timelog-page .timelog-date-label { color:#49453e; }
+    .timelog-page .timelog-toolbar button { background:var(--warm-panel); border-color:var(--warm-line); }
+    .timelog-page .timelog-tool-o { color:#d95d25 !important; }
+    .timelog-page .timelog-tool-i { color:#2d6faa !important; }
+    .timelog-page .timelog-tool-x { color:#59604f !important; }
+    .timelog-page .timelog-tool-erase { color:#625d54 !important; }
+    .timelog-page .timelog-tool-o.active { background:#f4d9cb; border-color:#d95d25; outline:2px solid rgba(217,93,37,.22); }
+    .timelog-page .timelog-tool-i.active { background:#dbe8f3; border-color:#2d6faa; outline:2px solid rgba(45,111,170,.20); }
+    .timelog-page .timelog-tool-x.active { background:#dfe2db; border-color:#59604f; outline:2px solid rgba(89,96,79,.20); }
+    .timelog-page .timelog-tool-erase.active { background:#e6ded2; border-color:#746c60; outline:2px solid rgba(80,72,62,.16); }
+    .timelog-page .timelog-grid-wrap { background:#e9e0d2; border-color:#d1c4b2; }
+    .timelog-page .timelog-minutes-head { color:#71695e; }
+    .timelog-page .timelog-hour { color:#625c53; }
+    .timelog-page .timelog-cell { background:#faf7f0; border-color:#d5cbbd; }
+    .timelog-page .timelog-cell.o { background:#d95d25; border-color:#ee7540; }
+    .timelog-page .timelog-cell.i { background:#2d6faa; border-color:#4a8dcc; }
+    .timelog-page .timelog-cell.x { background:#59604f; border-color:#727c64; }
+    .timelog-page .timelog-stat-row { background:var(--warm-panel); border-color:var(--warm-line); }
+    .timelog-page .timelog-stat-label { color:#5f594f; font-weight:600; }
+    .timelog-page .timelog-stat-average-label, .timelog-page .timelog-stat-total-label { color:#4d4942; }
+    .timelog-page .timelog-stat-o { color:#c64f1c; }
+    .timelog-page .timelog-stat-i { color:#23649e; }
+    .timelog-page .timelog-stat-x { color:#505847; }
+    .timelog-page .timelog-data-box { border-color:#d7cec1; }
+    .timelog-page .timelog-data-title { color:#5f594f; }
+    .timelog-page .timelog-data-actions .danger { background:#f7e8e6; color:var(--warm-danger); border-color:#d8aaa5; }
+
+    /* TODO */
+    .todo-page .todo-add-row input { background:var(--warm-panel); color:var(--warm-text); border-color:var(--warm-line); }
+    .todo-page .todo-add-row button, .todo-page .todo-actions button, .todo-page .todo-data-actions button { background:var(--warm-panel); color:var(--warm-text); border-color:var(--warm-line); }
+    .todo-page .todo-item { border-color:#d9d0c3; }
+    .todo-page .todo-complete-btn { color:#b44747 !important; background:#f7e8e6 !important; border-color:#dfb5b0 !important; }
+    .todo-page .todo-delete-btn { color:#6f685e !important; }
+    .todo-page .todo-history-title { color:#5f594f; }
+    .todo-page .todo-history-item { border-color:#ddd4c8; }
+    .todo-page .todo-history-date, .todo-page .todo-empty { color:#756e64; }
+    .todo-data-box { margin-top:28px; padding-top:18px; border-top:1px solid #d7cec1; }
+    .todo-data-title { font-size:16px; color:#5f594f; margin-bottom:10px; }
+    .todo-data-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .todo-data-actions button { padding:9px 12px; border-radius:8px; cursor:pointer; font-size:13px; }
+    .todo-data-actions button.danger { background:#f7e8e6; color:var(--warm-danger); border-color:#d8aaa5; }
+    #todoCsvInput { display:none; }
+
+    /* Settings */
+    .settings-page .settings-option { border-color:#d8cfc2; }
+    .settings-page .settings-option button, .settings-page .background-buttons button { background:var(--warm-panel); color:var(--warm-text); border-color:var(--warm-line); }
+    .settings-page .settings-option button:hover, .settings-page .background-buttons button:hover { background:#eee6da; }
+    .settings-page .settings-option button.selected { background:#ded3c3; border-color:#9e907c; }
+    .settings-page .settings-current, .settings-page .background-preview-name { color:#6e685e; }
+    .settings-page .background-settings { border-color:#d7cec1; }
+    .settings-page .tag-manage-box { background:var(--warm-panel); border-color:var(--warm-line); }
+    .settings-page .tag-manage-item { background:#e9e0d2; border-color:#d4c8b8; color:var(--warm-text); }
+    .settings-page .tag-manage-item span.del { color:#776f64; }
+    .settings-page .tag-add-input-group input { background:#fffdf8; border-color:var(--warm-line); color:var(--warm-text); }
+    .settings-page .tag-add-input-group button { background:#ded3c3; color:#342f28; }
+    .settings-page .settings-option button.backup-danger { background:#f7e8e6; color:var(--warm-danger); border-color:#d8aaa5; }
+
+    @media (max-width:600px) {
+      .records-page, .timelog-page, .todo-page, .settings-page { min-height:100dvh; }
+      .records-page .record-item { padding:12px 11px 12px 13px; gap:8px; }
+      .records-page .record-actions { gap:5px; }
+      .records-page .summary-card { padding:14px 7px; }
+      .records-page .summary-card-value { font-size:16px; }
+      .todo-data-actions, .timelog-data-actions { gap:7px; }
+    }
+
+    /* Final data-management alignment */
+    .records-page .records-toolbar-bottom { margin-top: 28px; margin-bottom: 0; }
+    .todo-page .todo-data-box { margin-top:18px; padding-top:18px; border-top:1px solid #d7cec1; }
+    .todo-page .todo-data-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .todo-page .todo-data-actions button {
+      padding:9px 12px;
+      font-size:13px;
+      border:1px solid var(--warm-line);
+      background:var(--warm-panel);
+      color:var(--warm-text);
+      border-radius:8px;
+      cursor:pointer;
+    }
+    .todo-page .todo-data-actions button.danger {
+      background:#f7e8e6;
+      color:var(--warm-danger);
+      border-color:#d8aaa5;
+    }
+
   </style>
 </head>
 
@@ -1126,24 +1259,17 @@
   <section class="timer-page" id="timerPage" style="display: none;"></section>
 
   <section class="records-page" id="recordsPage" style="display: none;">
-    <div class="records-toolbar">
-      <button onclick="triggerImportCSV()">CSV 불러오기</button>
-      <button onclick="exportRecordsCSV()">CSV 내보내기</button>
-      <button class="btn-reset" onclick="clearAllRecords()">모든 기록 초기화</button>
-    </div>
-    <input type="file" id="csvFileInput" accept=".csv" onchange="importRecordsCSV(this)">
-
     <div class="summary-grid">
       <div class="summary-card">
-        <div class="summary-card-label">Today</div>
+        <div class="summary-card-label">오늘</div>
         <div class="summary-card-value" id="todayTotalValue">0분</div>
       </div>
       <div class="summary-card">
-        <div class="summary-card-label">This Week</div>
+        <div class="summary-card-label">이번 주</div>
         <div class="summary-card-value" id="weekTotalValue">0분</div>
       </div>
       <div class="summary-card">
-        <div class="summary-card-label">This Month</div>
+        <div class="summary-card-label">이번 달</div>
         <div class="summary-card-value" id="monthTotalValue">0분</div>
       </div>
     </div>
@@ -1167,6 +1293,13 @@
     </div>
 
     <div class="records-list" id="recordsList"></div>
+
+    <div class="records-toolbar records-toolbar-bottom">
+      <button onclick="triggerImportCSV()">CSV 불러오기</button>
+      <button onclick="exportRecordsCSV()">CSV 내보내기</button>
+      <button class="btn-reset" onclick="clearAllRecords()">타이머 기록 삭제</button>
+    </div>
+    <input type="file" id="csvFileInput" accept=".csv" onchange="importRecordsCSV(this)">
   </section>
 
 
@@ -1209,7 +1342,7 @@
       <div class="timelog-data-actions">
         <button onclick="exportTimeLogCSVs()">CSV 내보내기</button>
         <button onclick="triggerTimeLogImport()">CSV 가져오기</button>
-        <button class="danger" onclick="clearAllTimeLogRecords()">전체 기록 삭제</button>
+        <button class="danger" onclick="clearAllTimeLogRecords()">로그 기록 삭제</button>
       </div>
       <input type="file" id="timelogCsvInput" accept=".csv" onchange="importTimeLogCSV(this)">
     </div>
@@ -1219,7 +1352,17 @@
     <details class="todo-history-details">
       <summary class="todo-history-title">완료 기록</summary>
       <div id="todoHistory"></div>
-    </details></section>
+    </details>
+    <div class="todo-data-box">
+      <div class="todo-data-title">데이터 관리</div>
+      <div class="todo-data-actions">
+        <button onclick="exportTodoCSV()">CSV 내보내기</button>
+        <button onclick="triggerTodoImport()">CSV 불러오기</button>
+        <button class="danger" onclick="clearTodoRecords()">TODO 기록 삭제</button>
+      </div>
+      <input type="file" id="todoCsvInput" accept=".csv,text/csv" onchange="importTodoCSV(this)">
+    </div>
+  </section>
 
   <section class="settings-page" id="settingsPage" style="display: none;">
     <div class="settings-section"><div class="settings-title">통합 기록 백업</div><div class="settings-option"><div class="settings-option-label">전체 기록 백업</div><button onclick="exportBackupJSON()">JSON 내보내기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 복원</div><button onclick="triggerBackupJSONImport()">JSON 불러오기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 초기화</div><button class="backup-danger" onclick="clearIntegratedRecords()">초기화</button></div><div class="settings-current">History · Day Log · TODO 현재 목록 · TODO 완료 기록</div><input type="file" id="backupJsonInput" accept=".json,application/json" onchange="importBackupJSON(this)"></div>
@@ -1236,31 +1379,31 @@
     </div>
 
     <div class="settings-section">
-      <div class="settings-title">Alert</div>
+      <div class="settings-title">알림</div>
 
       <div class="settings-option">
-        <div class="settings-option-label">Screen flashing</div>
-        <button id="flashAlertButton" onclick="setAlertMode('flash')">Select</button>
+        <div class="settings-option-label">화면 깜빡임</div>
+        <button id="flashAlertButton" onclick="setAlertMode('flash')">선택</button>
       </div>
 
       <div class="settings-option">
-        <div class="settings-option-label">Sound</div>
-        <button id="soundAlertButton" onclick="setAlertMode('sound')">Select</button>
+        <div class="settings-option-label">소리</div>
+        <button id="soundAlertButton" onclick="setAlertMode('sound')">선택</button>
       </div>
 
       <div class="settings-current" id="currentAlertText">
-        Current: Screen flashing
+        현재: 화면 깜빡임
       </div>
     </div>
 
     <div class="settings-section background-settings">
-      <div class="settings-title">Background</div>
+      <div class="settings-title">배경</div>
 
-      <div class="background-preview-name" id="backgroundCurrentText">None</div>
+      <div class="background-preview-name" id="backgroundCurrentText">없음</div>
 
       <div class="background-buttons">
-        <button onclick="selectBackgroundImage()">Choose image</button>
-        <button onclick="removeBackgroundImage()">Remove</button>
+        <button onclick="selectBackgroundImage()">이미지 선택</button>
+        <button onclick="removeBackgroundImage()">삭제</button>
       </div>
 
       <input id="backgroundFileInput" type="file" accept="image/*" onchange="handleBackgroundFile(this)">
@@ -1461,17 +1604,17 @@
           }
 
           if (!file) {
-            updateBackgroundCurrentText("None");
+            updateBackgroundCurrentText("없음");
             applyBackgroundToCurrentPage();
             return;
           }
 
           currentBackgroundUrl = URL.createObjectURL(file);
-          updateBackgroundCurrentText(file.name || "Selected image");
+          updateBackgroundCurrentText(file.name || "선택한 이미지");
           applyBackgroundToCurrentPage();
         };
       } catch (err) {
-        updateBackgroundCurrentText("None");
+        updateBackgroundCurrentText("없음");
       }
     }
 
@@ -1516,7 +1659,7 @@
           URL.revokeObjectURL(currentBackgroundUrl);
           currentBackgroundUrl = null;
         }
-        updateBackgroundCurrentText("None");
+        updateBackgroundCurrentText("없음");
         applyBackgroundToCurrentPage();
       } catch (e) {
         alert("삭제 실패");
@@ -2017,10 +2160,10 @@
 
       if (alertMode === "sound") {
         soundBtn.classList.add("selected");
-        currentText.textContent = "Current: Sound";
+        currentText.textContent = "현재: 소리";
       } else {
         flashBtn.classList.add("selected");
-        currentText.textContent = "Current: Screen flashing";
+        currentText.textContent = "현재: 화면 깜빡임";
       }
     }
 
@@ -2422,7 +2565,13 @@
     function addTodo(){const i=document.getElementById("todoInput");if(!i)return;const x=i.value.trim();if(!x)return;const a=loadTodoItems();a.push({id:Date.now()+Math.floor(Math.random()*1000),text:x});localStorage.setItem(TODO_KEY,JSON.stringify(a));i.value="";renderTodo();i.focus()}
     function deleteTodo(id){localStorage.setItem(TODO_KEY,JSON.stringify(loadTodoItems().filter(x=>x.id!==id)));renderTodo()}
     function completeTodo(id){const a=loadTodoItems(),x=a.find(v=>v.id===id);if(!x)return;const h=loadTodoCompleted();h.unshift({id:Date.now()+Math.floor(Math.random()*1000),date:getToday(),text:x.text});localStorage.setItem(TODO_KEY,JSON.stringify(a.filter(v=>v.id!==id)));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(h));renderTodo()}
-    function renderTodo(){const l=document.getElementById("todoList"),h=document.getElementById("todoHistory");if(!l||!h)return;const a=loadTodoItems();l.innerHTML=a.length?a.map(x=>`<div class="todo-item"><div class="todo-text">${todoEsc(x.text)}</div><div class="todo-actions"><button class="todo-complete-btn" onclick="completeTodo(${Number(x.id)})">✓</button><button class="todo-delete-btn" onclick="deleteTodo(${Number(x.id)})">✕</button></div></div>`).join(""):`<div class="todo-empty">할 일이 없습니다.</div>`;const c=loadTodoCompleted();h.innerHTML=c.length?c.map(x=>`<div class="todo-history-item"><div class="todo-history-date">${todoEsc(x.date)}</div><div>${todoEsc(x.text)}</div></div>`).join(""):`<div class="todo-empty">완료 기록이 없습니다.</div>`}
+    function renderTodo(){const l=document.getElementById("todoList"),h=document.getElementById("todoHistory");if(!l||!h)return;const a=loadTodoItems();l.innerHTML=a.length?a.map(x=>`<div class="todo-item"><div class="todo-text">${todoEsc(x.text)}</div><div class="todo-actions"><button class="todo-complete-btn" onclick="completeTodo(${Number(x.id)})">✓</button><button class="todo-delete-btn" onclick="deleteTodo(${Number(x.id)})">✕</button></div></div>`).join(""):`<div class="todo-empty">할 일이 없습니다.</div>`;const c=loadTodoCompleted();const visible=c.slice(0,30);h.innerHTML=visible.length?visible.map(x=>`<div class="todo-history-item"><div class="todo-history-date">${todoEsc(x.date)}</div><div>${todoEsc(x.text)}</div></div>`).join(""):`<div class="todo-empty">완료 기록이 없습니다.</div>`}
+    function todoCsvEscape(v){const t=String(v??"");return /[",\n\r]/.test(t)?`"${t.replace(/"/g,'""')}"`:t}
+    function parseTodoCSV(text){const rows=[];let row=[],cell="",quoted=false;for(let i=0;i<text.length;i++){const ch=text[i];if(quoted){if(ch==='"'&&text[i+1]==='"'){cell+='"';i++}else if(ch==='"'){quoted=false}else cell+=ch}else{if(ch==='"')quoted=true;else if(ch===','){row.push(cell);cell=""}else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell=""}else if(ch!=='\r')cell+=ch}}if(cell!==""||row.length){row.push(cell);rows.push(row)}return rows}
+    function exportTodoCSV(){const rows=[["상태","완료일","할 일"]];loadTodoItems().forEach(x=>rows.push(["현재","",x.text]));loadTodoCompleted().forEach(x=>rows.push(["완료",x.date||"",x.text]));const csv='\ufeff'+rows.map(r=>r.map(todoCsvEscape).join(',')).join('\r\n');const u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})),a=document.createElement('a');a.href=u;a.download=`OnIt_TODO_${getToday().replace(/\./g,'-')}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+    function triggerTodoImport(){document.getElementById('todoCsvInput').click()}
+    function importTodoCSV(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const rows=parseTodoCSV(String(e.target.result||'').replace(/^\ufeff/,''));if(!rows.length||rows[0][0]!=="상태"||rows[0][2]!=="할 일")throw 0;const active=[],done=[];rows.slice(1).forEach((row,n)=>{const status=(row[0]||'').trim(),date=(row[1]||'').trim(),text=(row[2]||'').trim();if(!text)return;const id=Date.now()+n+Math.floor(Math.random()*1000);if(status==='현재')active.push({id,text});else if(status==='완료')done.push({id,date,text})});if(!confirm('현재 TODO와 완료 기록을 CSV 파일의 내용으로 교체할까요?')){input.value='';return}localStorage.setItem(TODO_KEY,JSON.stringify(active));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(done));renderTodo();alert('TODO 기록을 불러왔습니다.')}catch(_){alert('올바른 TODO CSV 파일이 아닙니다.')}input.value=''};r.readAsText(f)}
+    function clearTodoRecords(){if(!confirm('현재 TODO와 완료 기록을 모두 삭제할까요?\n이 작업은 복구할 수 없습니다.'))return;localStorage.removeItem(TODO_KEY);localStorage.removeItem(TODO_HISTORY_KEY);renderTodo();alert('TODO 기록을 삭제했습니다.')}
     function exportBackupJSON(){const b={format:"OnItRecordsBackup",version:1,exportedAt:new Date().toISOString(),records:JSON.parse(localStorage.getItem("onItRecords"))||[],timeLog:loadTimeLogData(),todo:loadTodoItems(),todoCompleted:loadTodoCompleted()};const u=URL.createObjectURL(new Blob([JSON.stringify(b,null,2)],{type:"application/json;charset=utf-8;"})),a=document.createElement("a");a.href=u;a.download=`OnIt_Backup_${getToday().replace(/\./g,"-")}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
     function triggerBackupJSONImport(){document.getElementById("backupJsonInput").click()}
     function importBackupJSON(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(String(e.target.result||""));if(!d||d.format!=="OnItRecordsBackup"||!Array.isArray(d.records)||!d.timeLog||typeof d.timeLog!=="object"||!Array.isArray(d.todo)||!Array.isArray(d.todoCompleted))throw 0;if(!confirm("현재 History, Day Log, TODO 기록을 백업 파일의 내용으로 교체할까요?")){input.value="";return}localStorage.setItem("onItRecords",JSON.stringify(d.records));localStorage.setItem(TIMELOG_KEY,JSON.stringify(d.timeLog));localStorage.setItem(TODO_KEY,JSON.stringify(d.todo));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(d.todoCompleted));updateDisplay();alert("전체 기록을 복원했습니다.")}catch(_){alert("올바른 On It 통합 백업 JSON 파일이 아닙니다.")}input.value=""};r.readAsText(f)}
