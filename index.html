@@ -235,6 +235,115 @@
       background: rgba(40, 40, 40, 0.9);
     }
 
+    .preset-dropdown {
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+    }
+
+    .preset-dropdown summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 8px 14px;
+      border-radius: 18px;
+      background: rgba(15, 15, 15, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      color: #fff;
+      font-size: 13px;
+      text-align: center;
+      text-shadow:
+        -1px -1px 0 #000,
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+      user-select: none;
+    }
+
+    .preset-dropdown summary::-webkit-details-marker { display: none; }
+
+    .preset-dropdown[open] summary {
+      border-color: rgba(255,255,255,.8);
+      border-radius: 18px 18px 10px 10px;
+    }
+
+    .preset-dropdown-panel {
+      margin-top: 6px;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(15, 15, 15, 0.86);
+      border: 1px solid rgba(255,255,255,.35);
+      max-height: 220px;
+      overflow-y: auto;
+      backdrop-filter: blur(8px);
+    }
+
+    .preset-dropdown .preset-list {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      max-height: none;
+      overflow: visible;
+      gap: 6px;
+    }
+
+    .preset-dropdown .preset-btn {
+      width: 100%;
+      justify-content: space-between;
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .preset-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .preset-total {
+      opacity: .82;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .preset-dropdown .preset-add-btn {
+      width: 100%;
+      margin-top: 8px;
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .timer-phase-info {
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .phase-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.88);
+      background: rgba(255,255,255,.12);
+      box-shadow: 0 1px 5px rgba(0,0,0,.75);
+      box-sizing: border-box;
+    }
+
+    .phase-dot.done {
+      background: rgba(255,255,255,.95);
+      border-color: rgba(255,255,255,.95);
+    }
+
+    .phase-dot.current {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #fff;
+      background: rgba(255,255,255,.28);
+      box-shadow: 0 0 0 3px rgba(0,0,0,.20), 0 1px 7px rgba(0,0,0,.85);
+    }
+
     .controls {
       display: flex;
       gap: 20px;
@@ -1233,7 +1342,7 @@
 
   <nav class="side-menu" id="sideMenu">
     <button class="menu-close-btn" onclick="closeMenu()">✕</button>
-    <button class="menu-item" onclick="showOnIt()">On It</button>
+    <button class="menu-item" onclick="showOnIt()">Count Up</button>
     <button class="menu-item" onclick="showTimer()">Timer</button>
     <button class="menu-item" onclick="showRecords()">History</button>
     <button class="menu-item" onclick="showTimeLog()">Day Log</button>
@@ -1367,6 +1476,29 @@
   <section class="settings-page" id="settingsPage" style="display: none;">
     <div class="settings-section"><div class="settings-title">통합 기록 백업</div><div class="settings-option"><div class="settings-option-label">전체 기록 백업</div><button onclick="exportBackupJSON()">JSON 내보내기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 복원</div><button onclick="triggerBackupJSONImport()">JSON 불러오기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 초기화</div><button class="backup-danger" onclick="clearIntegratedRecords()">초기화</button></div><div class="settings-current">History · Day Log · TODO 현재 목록 · TODO 완료 기록</div><input type="file" id="backupJsonInput" accept=".json,application/json" onchange="importBackupJSON(this)"></div>
 
+    <div class="settings-section background-settings">
+      <div class="settings-title">배경</div>
+      <div class="background-preview-name" id="backgroundCurrentText">없음</div>
+      <div class="background-buttons">
+        <button onclick="selectBackgroundImage()">이미지 선택</button>
+        <button onclick="removeBackgroundImage()">삭제</button>
+      </div>
+      <input id="backgroundFileInput" type="file" accept="image/*" onchange="handleBackgroundFile(this)">
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">알림</div>
+      <div class="settings-option">
+        <div class="settings-option-label">화면 깜빡임</div>
+        <button id="flashAlertButton" onclick="setAlertMode('flash')">선택</button>
+      </div>
+      <div class="settings-option">
+        <div class="settings-option-label">소리</div>
+        <button id="soundAlertButton" onclick="setAlertMode('sound')">선택</button>
+      </div>
+      <div class="settings-current" id="currentAlertText">현재: 화면 깜빡임</div>
+    </div>
+
     <div class="settings-section">
       <div class="settings-title">작업 태그 관리</div>
       <div class="tag-manage-box">
@@ -1376,37 +1508,6 @@
           <button onclick="addNewTag()">추가</button>
         </div>
       </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-title">알림</div>
-
-      <div class="settings-option">
-        <div class="settings-option-label">화면 깜빡임</div>
-        <button id="flashAlertButton" onclick="setAlertMode('flash')">선택</button>
-      </div>
-
-      <div class="settings-option">
-        <div class="settings-option-label">소리</div>
-        <button id="soundAlertButton" onclick="setAlertMode('sound')">선택</button>
-      </div>
-
-      <div class="settings-current" id="currentAlertText">
-        현재: 화면 깜빡임
-      </div>
-    </div>
-
-    <div class="settings-section background-settings">
-      <div class="settings-title">배경</div>
-
-      <div class="background-preview-name" id="backgroundCurrentText">없음</div>
-
-      <div class="background-buttons">
-        <button onclick="selectBackgroundImage()">이미지 선택</button>
-        <button onclick="removeBackgroundImage()">삭제</button>
-      </div>
-
-      <input id="backgroundFileInput" type="file" accept="image/*" onchange="handleBackgroundFile(this)">
     </div>
   </section>
 
@@ -1686,7 +1787,7 @@
     function showOnIt() {
       hideAllPages();
       document.getElementById("onitPage").style.display = "flex";
-      document.getElementById("headerTitle").textContent = "On It";
+      document.getElementById("headerTitle").textContent = "Count Up";
 
       renderTagChips();
       updateOnItStatus();
@@ -1857,6 +1958,22 @@
       localStorage.setItem("onItTimerPresets", JSON.stringify(presets));
     }
 
+    const TIMER_LAST_RUN_KEY = "onItTimerLastRun";
+
+    function getLastTimerRun() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(TIMER_LAST_RUN_KEY));
+        if (Array.isArray(saved) && saved.length === 4) {
+          return saved.map(v => Math.max(0, parseInt(v) || 0));
+        }
+      } catch (e) {}
+      return [25, 5, 25, 5];
+    }
+
+    function saveLastTimerRun(values) {
+      localStorage.setItem(TIMER_LAST_RUN_KEY, JSON.stringify(values));
+    }
+
     function applyPreset(m1, m2, m3, m4) {
       const i1 = document.getElementById("tMin1");
       const i2 = document.getElementById("tMin2");
@@ -1915,13 +2032,18 @@
       const page = document.getElementById("timerPage");
       const presets = getCustomPresets();
       const tags = getCustomTags();
+      const lastRun = getLastTimerRun();
 
-      let presetButtonsHtml = presets.map(p => `
-        <button class="preset-btn" onclick="applyPreset(${p.values[0]}, ${p.values[1]}, ${p.values[2]}, ${p.values[3] || 0})">
-          ${p.name}
-          <span class="preset-del-btn" onclick="deletePreset('${p.id}', event)">✕</span>
-        </button>
-      `).join("");
+      let presetButtonsHtml = presets.map(p => {
+        const vals = [p.values[0] || 0, p.values[1] || 0, p.values[2] || 0, p.values[3] || 0];
+        const total = vals.reduce((sum, v) => sum + (parseInt(v) || 0), 0);
+        return `
+          <button class="preset-btn" onclick="applyPreset(${vals[0]}, ${vals[1]}, ${vals[2]}, ${vals[3]})">
+            <span class="preset-main"><span>${p.name}</span><span class="preset-total">총 ${total}분</span></span>
+            <span class="preset-del-btn" onclick="deletePreset('${p.id}', event)">✕</span>
+          </button>
+        `;
+      }).join("");
 
       let tagChipsHtml = tags.map(t => `
         <button class="tag-chip ${activeTag === t ? 'selected' : ''}" onclick="selectActiveTag('${t}'); renderTimerTagChips();">${t}</button>
@@ -1936,18 +2058,23 @@
 
         <div class="timer-inputs-wrapper">
           <div class="timer-inputs">
-            <input type="number" id="tMin1" class="timer-input" value="25" min="0">
-            <input type="number" id="tMin2" class="timer-input" value="5" min="0">
-            <input type="number" id="tMin3" class="timer-input" value="25" min="0">
-            <input type="number" id="tMin4" class="timer-input" value="5" min="0">
+            <input type="number" id="tMin1" class="timer-input" value="${lastRun[0]}" min="0">
+            <input type="number" id="tMin2" class="timer-input" value="${lastRun[1]}" min="0">
+            <input type="number" id="tMin3" class="timer-input" value="${lastRun[2]}" min="0">
+            <input type="number" id="tMin4" class="timer-input" value="${lastRun[3]}" min="0">
           </div>
         </div>
 
         <div class="preset-container">
-          <div class="preset-list">
-            ${presetButtonsHtml}
-          </div>
-          <button class="preset-add-btn" onclick="addCurrentAsPreset()">+ 현재 설정 저장</button>
+          <details class="preset-dropdown">
+            <summary>프리셋 ▾</summary>
+            <div class="preset-dropdown-panel">
+              <div class="preset-list">
+                ${presetButtonsHtml}
+              </div>
+              <button class="preset-add-btn" onclick="addCurrentAsPreset()">+ 현재 설정 저장</button>
+            </div>
+          </details>
         </div>
 
         <button class="control-button timer-setup-play" onclick="startTimerSetup()">▶</button>
@@ -1958,7 +2085,7 @@
       const page = document.getElementById("timerPage");
       page.innerHTML = `
         <div class="timer-remaining background-readable" id="timerRemainingDisplay">00&thinsp;00&thinsp;00</div>
-        <div class="timer-phase-info background-readable" id="timerPhaseInfo">1 / 4</div>
+        <div class="timer-phase-info" id="timerPhaseInfo" aria-label="타이머 진행 단계"></div>
         <div class="controls">
           <button class="control-button" id="timerPlayBtn" onclick="resumeTimer()">▶</button>
           <button class="control-button" id="timerPauseBtn" onclick="pauseTimer()">Ⅱ</button>
@@ -1994,7 +2121,11 @@
       }
 
       display.textContent = formatTimer(currentPhaseSec);
-      phaseInfo.textContent = `${currentPhaseIndex + 1} / ${timerPhases.length}`;
+      phaseInfo.innerHTML = timerPhases.map((_, i) => {
+        const stateClass = i < currentPhaseIndex ? "done" : (i === currentPhaseIndex ? "current" : "");
+        return `<span class="phase-dot ${stateClass}"></span>`;
+      }).join("");
+      phaseInfo.setAttribute("aria-label", `${currentPhaseIndex + 1} / ${timerPhases.length} 단계`);
     }
 
     function startTimerSetup() {
@@ -2015,6 +2146,7 @@
         return;
       }
 
+      saveLastTimerRun([m1, m2, m3, m4]);
       ensureTimerNotificationPermission();
 
       timerPhases = phasesInSec;
@@ -2035,24 +2167,35 @@
         if (timerState !== "running") return;
 
         const now = Date.now();
-        const elapsedSinceStart = Math.floor((now - timerPhaseStartTime) / 1000);
-        const currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
+        let elapsedSinceStart = Math.floor((now - timerPhaseStartTime) / 1000);
+        let currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
+        let crossedPhase = false;
+
+        // 백그라운드에서 JS 실행이 지연되어도 실제 경과시간만큼 구간을 따라잡는다.
+        while (currentPhaseSec <= 0 && timerState === "running") {
+          crossedPhase = true;
+          timerTotalElapsed += timerPhaseRemainingAtPause;
+          elapsedSinceStart -= timerPhaseRemainingAtPause;
+          currentPhaseIndex++;
+
+          if (currentPhaseIndex >= timerPhases.length) {
+            triggerTimerAlert();
+            finishTimer();
+            return;
+          }
+
+          timerPhaseRemainingAtPause = timerPhases[currentPhaseIndex];
+          currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
+        }
+
+        if (crossedPhase) {
+          // 이전 구간을 넘긴 초과 경과시간도 새 구간에 그대로 반영한다.
+          timerPhaseStartTime = now - (elapsedSinceStart * 1000);
+          triggerTimerAlert();
+        }
 
         updateTimerRunningDisplay();
         updateDisplay();
-
-        if (currentPhaseSec <= 0) {
-          triggerTimerAlert();
-          timerTotalElapsed += timerPhases[currentPhaseIndex];
-          currentPhaseIndex++;
-
-          if (currentPhaseIndex < timerPhases.length) {
-            timerPhaseRemainingAtPause = timerPhases[currentPhaseIndex];
-            timerPhaseStartTime = Date.now();
-          } else {
-            finishTimer();
-          }
-        }
       }, 500);
     }
 
@@ -2173,14 +2316,14 @@
         if (!AudioContext) return;
         const ctx = new AudioContext();
 
-        function playBeep(freq, startTime, duration) {
+        function playBeep(freq, startTime, duration, volume = 0.32) {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = "sine";
           osc.frequency.setValueAtTime(freq, startTime);
-          
-          gain.gain.setValueAtTime(0, startTime);
-          gain.gain.linearRampToValueAtTime(0.3, startTime + 0.02);
+
+          gain.gain.setValueAtTime(0.001, startTime);
+          gain.gain.linearRampToValueAtTime(volume, startTime + 0.012);
           gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
           osc.connect(gain);
@@ -2190,12 +2333,21 @@
         }
 
         const now = ctx.currentTime;
-        playBeep(1046, now, 0.15);
-        playBeep(1318, now + 0.18, 0.25);
-        playBeep(1046, now + 0.5, 0.15);
-        playBeep(1318, now + 0.68, 0.25);
+        const notes = [
+          [880, 0.00, 0.08],
+          [1046, 0.11, 0.08],
+          [1318, 0.22, 0.08],
+          [1568, 0.33, 0.18]
+        ];
+        const repeatGap = 0.62;
 
-        setTimeout(() => ctx.close(), 1500);
+        for (let r = 0; r < 4; r++) {
+          notes.forEach(([freq, offset, duration]) => {
+            playBeep(freq, now + r * repeatGap + offset, duration);
+          });
+        }
+
+        setTimeout(() => ctx.close(), 3000);
       } catch (e) {}
     }
 
@@ -2207,7 +2359,7 @@
       const interval = setInterval(() => {
         display.classList.toggle("text-flash");
         count++;
-        if (count >= 6) {
+        if (count >= 12) {
           clearInterval(interval);
           display.classList.remove("text-flash");
         }
