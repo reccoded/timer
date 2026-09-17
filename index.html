@@ -2219,7 +2219,14 @@
     }
 
     function stopTimer() {
-      if (timerLoop) clearInterval(timerLoop);
+      if (timerLoop) { clearInterval(timerLoop); timerLoop = null; }
+
+      if (timerState === "finished") {
+        timerState = "idle";
+        showTimerSetupScreen();
+        updateDisplay();
+        return;
+      }
 
       let actualElapsed = timerTotalElapsed;
       if (timerState === "running") {
@@ -2242,12 +2249,25 @@
     }
 
     function finishTimer() {
-      if (timerLoop) clearInterval(timerLoop);
+      if (timerLoop) {
+        clearInterval(timerLoop);
+        timerLoop = null;
+      }
 
-      saveRecord(timerTotalElapsed, getToday(), activeTag, "");
+      // 마지막 구간까지 완료된 총 시간을 정확히 한 번 기록한다.
+      const completedElapsed = timerPhases.reduce((sum, sec) => sum + sec, 0);
+      if (completedElapsed > 0) {
+        saveRecord(completedElapsed, getToday(), activeTag, "");
+      }
 
-      timerState = "idle";
+      // 자동 완료 뒤 정지 버튼을 눌러도 다시 저장되지 않도록 종료 상태를 확정한다.
+      timerTotalElapsed = 0;
+      timerPhaseRemainingAtPause = 0;
+      timerState = "finished";
       timerPhaseStartTime = null;
+
+      const display = document.getElementById("timerRemaining");
+      if (display) display.textContent = formatTimer(0);
 
       updateDisplay();
     }
