@@ -102,6 +102,134 @@
 
     .header-title { display: none; }
 
+    .quick-memo-button {
+      position: fixed;
+      top: 58px;
+      left: 20px;
+      width: 34px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(9,9,9,.20);
+      color: rgba(255,255,255,.86);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 901;
+      box-shadow: 0 4px 14px rgba(0,0,0,.22), inset 0 0 0 1px rgba(255,255,255,.025);
+      text-shadow: 0 1px 3px rgba(0,0,0,.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .quick-memo-button:hover {
+      border-color: rgba(255,255,255,.30);
+      background: rgba(20,20,20,.28);
+    }
+
+    .quick-memo-panel {
+      position: fixed;
+      top: 58px;
+      left: 64px;
+      width: min(310px, calc(100vw - 82px));
+      height: min(360px, calc(100vh - 82px));
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(18,18,18,.76);
+      box-shadow: 0 12px 34px rgba(0,0,0,.36);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 1100;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-8px);
+      transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+    }
+
+    .quick-memo-panel.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    .quick-memo-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      color: rgba(255,255,255,.88);
+      font-size: 13px;
+    }
+
+    .quick-memo-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .quick-memo-clear,
+    .quick-memo-close {
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.66);
+      cursor: pointer;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+
+    .quick-memo-close { font-size: 16px; }
+
+    .quick-memo-text {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      resize: none;
+      box-sizing: border-box;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 10px;
+      outline: none;
+      padding: 11px;
+      background: rgba(0,0,0,.20);
+      color: #fff;
+      font: inherit;
+      font-size: 15px;
+      line-height: 1.55;
+      caret-color: #fff;
+    }
+
+    .quick-memo-text::placeholder { color: rgba(255,255,255,.34); }
+    .quick-memo-text:focus { border-color: rgba(255,255,255,.24); }
+
+    body:has(#recordsPage[style*="block"]) .quick-memo-button,
+    body:has(#timeLogPage[style*="block"]) .quick-memo-button,
+    body:has(#todoPage[style*="block"]) .quick-memo-button,
+    body:has(#settingsPage[style*="block"]) .quick-memo-button {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .quick-memo-button {
+        top: 54px;
+        left: 18px;
+        width: 32px;
+        height: 27px;
+      }
+      .quick-memo-panel {
+        top: 54px;
+        left: 58px;
+        width: calc(100vw - 74px);
+        height: min(330px, calc(100vh - 72px));
+      }
+    }
+
     .side-menu {
       position: fixed;
       top: 0;
@@ -1340,6 +1468,19 @@
     <div class="header-title" id="headerTitle">On It</div>
   </header>
 
+  <button class="quick-memo-button" id="quickMemoButton" onclick="toggleQuickMemo()" aria-label="메모 열기">—</button>
+
+  <aside class="quick-memo-panel" id="quickMemoPanel" aria-label="빠른 메모">
+    <div class="quick-memo-head">
+      <span>메모</span>
+      <div class="quick-memo-head-actions">
+        <button class="quick-memo-clear" onclick="clearQuickMemo()">비우기</button>
+        <button class="quick-memo-close" onclick="closeQuickMemo()" aria-label="메모 닫기">✕</button>
+      </div>
+    </div>
+    <textarea class="quick-memo-text" id="quickMemoText" placeholder="작업 중 잠깐 메모…" oninput="saveQuickMemo()"></textarea>
+  </aside>
+
   <nav class="side-menu" id="sideMenu">
     <button class="menu-close-btn" onclick="closeMenu()">✕</button>
     <button class="menu-item" onclick="showOnIt()">Count Up</button>
@@ -1775,7 +1916,44 @@
       document.getElementById("sideMenu").classList.remove("open");
     }
 
+    const QUICK_MEMO_KEY = "onItQuickMemo";
+
+    function loadQuickMemo() {
+      const box = document.getElementById("quickMemoText");
+      if (box) box.value = localStorage.getItem(QUICK_MEMO_KEY) || "";
+    }
+
+    function saveQuickMemo() {
+      const box = document.getElementById("quickMemoText");
+      if (box) localStorage.setItem(QUICK_MEMO_KEY, box.value);
+    }
+
+    function toggleQuickMemo() {
+      const panel = document.getElementById("quickMemoPanel");
+      if (!panel) return;
+      const willOpen = !panel.classList.contains("open");
+      panel.classList.toggle("open", willOpen);
+      if (willOpen) {
+        loadQuickMemo();
+        setTimeout(() => document.getElementById("quickMemoText")?.focus(), 0);
+      }
+    }
+
+    function closeQuickMemo() {
+      document.getElementById("quickMemoPanel")?.classList.remove("open");
+    }
+
+    function clearQuickMemo() {
+      const box = document.getElementById("quickMemoText");
+      if (!box || !box.value) return;
+      if (!confirm("메모 내용을 비울까요?")) return;
+      box.value = "";
+      localStorage.removeItem(QUICK_MEMO_KEY);
+      box.focus();
+    }
+
     function hideAllPages() {
+      closeQuickMemo();
       document.getElementById("onitPage").style.display = "none";
       document.getElementById("timerPage").style.display = "none";
       document.getElementById("recordsPage").style.display = "none";
