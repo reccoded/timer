@@ -1,4 +1,4 @@
-const CACHE_NAME = "onit-v41-cache";
+const CACHE_NAME = "onit-pwa-v42-cache";
 const APP_SHELL = [
   "./",
   "./index.html",
