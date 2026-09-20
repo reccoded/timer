@@ -1460,28 +1460,30 @@
 
 
     /* ===== Play · YouTube focus player ===== */
-    .play-page{position:relative;min-height:100vh;width:100%;overflow:hidden;background:#050505;color:#fff;isolation:isolate}
-    .play-video-stage{position:absolute;inset:0;background:#050505;overflow:hidden}
-    .play-video-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#050505}
-    .play-video-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:32px;color:rgba(255,255,255,.72);font-size:14px;text-align:center;letter-spacing:.02em;background:radial-gradient(circle at 50% 40%,#222 0,#0c0c0c 45%,#050505 100%)}
+    .play-page{position:relative;min-height:100vh;width:100%;overflow:hidden;background:#eee6d7;color:#fff;isolation:isolate}
+    .play-video-stage{position:absolute;inset:0;background:#eee6d7;overflow:hidden}
+    .play-video-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+    .play-video-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:32px;color:#8f8575;font-size:14px;text-align:center;letter-spacing:.02em;background:#eee6d7}
     .play-video-empty.hidden{display:none}
-    .play-hud{position:absolute;right:28px;top:24px;z-index:40;width:250px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;transition:opacity .2s ease,transform .2s ease}
+    .play-hud{position:absolute;right:28px;top:50px;z-index:40;width:250px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;transition:opacity .2s ease,transform .2s ease}
     .play-hud-time{width:100%;font-size:clamp(30px,4vw,52px);font-weight:300;line-height:1;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:.02em;text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 2px rgba(0,0,0,.95)}
     .play-hud-sub{width:100%;min-height:18px;display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;font-size:14px;font-weight:500;letter-spacing:.14em;text-shadow:0 1px 2px #000,0 2px 8px rgba(0,0,0,.95)}
     .play-hud .controls{transform:scale(.92);transform-origin:center top}
-    .play-tools{position:absolute;left:74px;bottom:18px;z-index:42;display:flex;gap:8px;align-items:center}
-    .play-tool-btn{height:36px;padding:0 12px;border:1px solid rgba(255,255,255,.24);border-radius:10px;background:rgba(10,10,10,.58);color:#fff;font-size:12px;cursor:pointer;backdrop-filter:blur(10px);box-shadow:0 4px 18px rgba(0,0,0,.18)}
-    .play-tool-btn:hover{background:rgba(20,20,20,.75)}
-    .play-url-panel{position:absolute;left:74px;bottom:62px;z-index:43;width:min(520px,calc(100vw - 100px));padding:12px;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(12,12,12,.82);backdrop-filter:blur(14px);box-shadow:0 14px 34px rgba(0,0,0,.3);display:none;gap:8px}
-    .play-url-panel.open{display:flex}
-    .play-url-input{min-width:0;flex:1;height:38px;padding:0 12px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;outline:none;font-size:13px}
-    .play-url-input::placeholder{color:rgba(255,255,255,.5)}
-    .play-url-load{height:38px;padding:0 14px;border:0;border-radius:9px;background:#fff;color:#222;cursor:pointer;font-weight:600}
-    .play-hide-hud{position:absolute;right:18px;top:18px;z-index:46;width:34px;height:34px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(10,10,10,.5);color:#fff;cursor:pointer;backdrop-filter:blur(10px);font-size:15px}
+    .play-settings-toggle{position:fixed;top:94px;left:20px;z-index:902;width:34px;height:28px;padding:0;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(9,9,9,.20);color:rgba(255,255,255,.86);font-size:14px;cursor:pointer;backdrop-filter:blur(10px);text-shadow:0 1px 3px rgba(0,0,0,.95)}
+    .play-settings-panel{position:fixed;top:130px;left:20px;z-index:903;width:min(390px,calc(100vw - 40px));max-height:calc(100vh - 150px);overflow:auto;padding:12px;border:1px solid rgba(255,255,255,.20);border-radius:14px;background:rgba(15,15,15,.88);backdrop-filter:blur(16px);box-shadow:0 14px 34px rgba(0,0,0,.32);display:none}
+    .play-settings-panel.open{display:block}
+    .play-settings-row{display:flex;gap:7px;margin-bottom:8px}.play-settings-row:last-child{margin-bottom:0}
+    .play-url-input,.play-fav-name{min-width:0;flex:1;height:38px;padding:0 11px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;outline:none;font-size:13px}
+    .play-tool-btn,.play-url-load{height:38px;padding:0 11px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.10);color:#fff;cursor:pointer;font-size:12px;white-space:nowrap}.play-url-load{background:#fff;color:#222;font-weight:600}
+    .play-tool-btn.danger{color:#ffd6d6}
+    .play-fav-title{margin:11px 2px 7px;color:rgba(255,255,255,.68);font-size:11px;letter-spacing:.08em}
+    .play-fav-list{display:flex;flex-direction:column;gap:6px}.play-fav-empty{padding:9px;color:rgba(255,255,255,.45);font-size:12px}
+    .play-fav-item{display:flex;align-items:center;gap:6px;padding:6px 7px;border-radius:9px;background:rgba(255,255,255,.07)}
+    .play-fav-main{min-width:0;flex:1;border:0;background:transparent;color:#fff;text-align:left;cursor:pointer;padding:3px}.play-fav-name-text{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.play-fav-url{display:block;margin-top:2px;color:rgba(255,255,255,.42);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .play-fav-edit,.play-fav-del{width:29px;height:29px;border:0;border-radius:7px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.72);cursor:pointer}.play-fav-del{color:#ffc7c7}
     .play-page.hud-hidden .play-hud{opacity:0;pointer-events:none;transform:translateY(-8px)}
-    .play-page.hud-hidden .play-hide-hud{opacity:.42}
     body:has(#playPage[style*="flex"]) .quick-memo-button{display:flex}
-    @media(max-width:700px){.play-hud{right:14px;top:18px;width:210px}.play-hud-time{font-size:34px}.play-tools{left:14px;bottom:14px}.play-url-panel{left:14px;bottom:58px;width:calc(100vw - 28px)}.play-hide-hud{right:10px;top:10px}}
+    @media(max-width:700px){.play-hud{right:14px;top:42px;width:210px}.play-hud-time{font-size:34px}.play-settings-toggle{left:14px}.play-settings-panel{left:14px;width:calc(100vw - 28px)}}
 
 </style>
 </head>
@@ -1544,14 +1546,23 @@
       <div class="play-hud-sub background-readable" id="playHudSub">TODAY · 0.0h</div>
       <div class="controls" id="playControls"></div>
     </div>
-    <button class="play-hide-hud" id="playHideHudBtn" onclick="togglePlayHud()" aria-label="타이머 숨기기" title="타이머 숨기기">◐</button>
-    <div class="play-tools">
-      <button class="play-tool-btn" onclick="togglePlayUrlPanel()">YouTube</button>
-      <button class="play-tool-btn" id="playSoundBtn" onclick="togglePlaySound()">🔇 음소거</button>
-    </div>
-    <div class="play-url-panel" id="playUrlPanel">
-      <input class="play-url-input" id="playUrlInput" type="text" inputmode="url" placeholder="YouTube 영상 / 라이브 주소 붙여넣기" onkeydown="if(event.key==='Enter') loadPlayYoutube()">
-      <button class="play-url-load" onclick="loadPlayYoutube()">불러오기</button>
+    <button class="play-settings-toggle" id="playSettingsBtn" onclick="togglePlaySettings()" aria-label="PLAY 설정" title="PLAY 설정">⚙</button>
+    <div class="play-settings-panel" id="playSettingsPanel">
+      <div class="play-settings-row">
+        <input class="play-url-input" id="playUrlInput" type="text" inputmode="url" placeholder="YouTube 영상 / 라이브 주소" onkeydown="if(event.key==='Enter') loadPlayYoutube()">
+        <button class="play-url-load" onclick="loadPlayYoutube()">불러오기</button>
+      </div>
+      <div class="play-settings-row">
+        <input class="play-fav-name" id="playFavName" type="text" placeholder="즐겨찾기 이름 · 예: 캠프파이어" onkeydown="if(event.key==='Enter') addPlayFavorite()">
+        <button class="play-tool-btn" onclick="addPlayFavorite()">☆ 저장</button>
+      </div>
+      <div class="play-settings-row">
+        <button class="play-tool-btn" id="playSoundBtn" onclick="togglePlaySound()">🔇 음소거</button>
+        <button class="play-tool-btn" id="playHudToggleBtn" onclick="togglePlayHud()">타이머 숨김</button>
+        <button class="play-tool-btn danger" onclick="stopPlayYoutube()">PLAY 종료</button>
+      </div>
+      <div class="play-fav-title">즐겨찾기</div>
+      <div class="play-fav-list" id="playFavList"></div>
     </div>
   </section>
 
@@ -2983,96 +2994,49 @@
     // ===== PLAY · YouTube focus player =====
     const PLAY_YOUTUBE_KEY = "onItPlayYoutubeUrl";
     const PLAY_MUTED_KEY = "onItPlayYoutubeMuted";
+    const PLAY_FAVORITES_KEY = "onItPlayYoutubeFavorites";
     let playYoutubeMuted = localStorage.getItem(PLAY_MUTED_KEY) !== "false";
 
     function showPlay() {
       hideAllPages();
       document.getElementById("playPage").style.display = "flex";
       document.getElementById("headerTitle").textContent = "Play";
-      closeMenu();
-      updatePlayDisplay();
+      closeMenu(); updatePlayDisplay();
       const saved = localStorage.getItem(PLAY_YOUTUBE_KEY) || "";
-      const input = document.getElementById("playUrlInput");
-      if (input && !input.value) input.value = saved;
-      const frame = document.getElementById("playYoutubeFrame");
-      if (saved && frame && !frame.src) setPlayYoutube(saved, false);
-      updatePlaySoundButton();
+      const input = document.getElementById("playUrlInput"); if (input && !input.value) input.value = saved;
+      updatePlaySoundButton(); updatePlayHudButton(); renderPlayFavorites();
     }
-
     function extractYoutubeId(value) {
-      const raw = String(value || "").trim();
-      if (/^[A-Za-z0-9_-]{11}$/.test(raw)) return raw;
-      try {
-        const u = new URL(raw);
-        const host = u.hostname.replace(/^www\./, "");
-        if (host === "youtu.be") return u.pathname.split("/").filter(Boolean)[0] || "";
-        if (host.endsWith("youtube.com")) {
-          if (u.pathname === "/watch") return u.searchParams.get("v") || "";
-          const parts = u.pathname.split("/").filter(Boolean);
-          if (["embed","shorts","live"].includes(parts[0])) return parts[1] || "";
-        }
-      } catch (_) {}
-      return "";
+      const raw=String(value||"").trim(); if(/^[A-Za-z0-9_-]{11}$/.test(raw))return raw;
+      try{const u=new URL(raw),host=u.hostname.replace(/^www\./,""); if(host==="youtu.be")return u.pathname.split("/").filter(Boolean)[0]||""; if(host.endsWith("youtube.com")){if(u.pathname==="/watch")return u.searchParams.get("v")||"";const parts=u.pathname.split("/").filter(Boolean);if(["embed","shorts","live"].includes(parts[0]))return parts[1]||""}}catch(_){} return "";
     }
-
-    function setPlayYoutube(value, save=true) {
-      const id = extractYoutubeId(value);
-      if (!id) { alert("YouTube 영상 또는 라이브 주소를 확인해 주세요."); return false; }
-      const frame = document.getElementById("playYoutubeFrame");
-      if (!frame) return false;
-      const mute = playYoutubeMuted ? 1 : 0;
-      frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&controls=1&rel=0&playsinline=1&enablejsapi=1&mute=${mute}`;
-      document.getElementById("playVideoEmpty")?.classList.add("hidden");
-      if (save) localStorage.setItem(PLAY_YOUTUBE_KEY, String(value).trim());
-      return true;
+    function setPlayYoutube(value,save=true){
+      const id=extractYoutubeId(value); if(!id){alert("YouTube 영상 또는 라이브 주소를 확인해 주세요.");return false}
+      const frame=document.getElementById("playYoutubeFrame"); if(!frame)return false;
+      const mute=playYoutubeMuted?1:0; frame.src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&controls=1&rel=0&playsinline=1&enablejsapi=1&mute=${mute}`;
+      document.getElementById("playVideoEmpty")?.classList.add("hidden"); if(save)localStorage.setItem(PLAY_YOUTUBE_KEY,String(value).trim()); return true;
     }
-
-    function loadPlayYoutube() {
-      const input = document.getElementById("playUrlInput");
-      if (setPlayYoutube(input?.value || "", true)) document.getElementById("playUrlPanel")?.classList.remove("open");
-    }
-
-    function togglePlayUrlPanel() { document.getElementById("playUrlPanel")?.classList.toggle("open"); }
-    function togglePlayHud() { document.getElementById("playPage")?.classList.toggle("hud-hidden"); }
-
-    function sendYoutubeCommand(func, args=[]) {
-      const frame = document.getElementById("playYoutubeFrame");
-      if (!frame?.contentWindow || !frame.src) return;
-      frame.contentWindow.postMessage(JSON.stringify({event:"command",func,args}), "*");
-    }
-
-    function togglePlaySound() {
-      playYoutubeMuted = !playYoutubeMuted;
-      localStorage.setItem(PLAY_MUTED_KEY, String(playYoutubeMuted));
-      sendYoutubeCommand(playYoutubeMuted ? "mute" : "unMute");
-      updatePlaySoundButton();
-    }
-
-    function updatePlaySoundButton() {
-      const btn = document.getElementById("playSoundBtn");
-      if (btn) btn.textContent = playYoutubeMuted ? "🔇 음소거" : "🔊 소리 켬";
-    }
-
+    function loadPlayYoutube(){const input=document.getElementById("playUrlInput");setPlayYoutube(input?.value||"",true)}
+    function togglePlaySettings(){document.getElementById("playSettingsPanel")?.classList.toggle("open")}
+    function togglePlayHud(){const page=document.getElementById("playPage");page?.classList.toggle("hud-hidden");updatePlayHudButton()}
+    function updatePlayHudButton(){const b=document.getElementById("playHudToggleBtn"),p=document.getElementById("playPage");if(b&&p)b.textContent=p.classList.contains("hud-hidden")?"타이머 표시":"타이머 숨김"}
+    function stopPlayYoutube(){const frame=document.getElementById("playYoutubeFrame");if(frame)frame.src="";document.getElementById("playVideoEmpty")?.classList.remove("hidden");document.getElementById("playSettingsPanel")?.classList.remove("open")}
+    function sendYoutubeCommand(func,args=[]){const frame=document.getElementById("playYoutubeFrame");if(!frame?.contentWindow||!frame.src)return;frame.contentWindow.postMessage(JSON.stringify({event:"command",func,args}),"*")}
+    function togglePlaySound(){playYoutubeMuted=!playYoutubeMuted;localStorage.setItem(PLAY_MUTED_KEY,String(playYoutubeMuted));sendYoutubeCommand(playYoutubeMuted?"mute":"unMute");updatePlaySoundButton()}
+    function updatePlaySoundButton(){const btn=document.getElementById("playSoundBtn");if(btn)btn.textContent=playYoutubeMuted?"🔇 음소거":"🔊 소리 켬"}
+    function getPlayFavorites(){try{const a=JSON.parse(localStorage.getItem(PLAY_FAVORITES_KEY)||"[]");return Array.isArray(a)?a:[]}catch(_){return[]}}
+    function savePlayFavorites(a){localStorage.setItem(PLAY_FAVORITES_KEY,JSON.stringify(a))}
+    function addPlayFavorite(){const url=(document.getElementById("playUrlInput")?.value||"").trim(),name=(document.getElementById("playFavName")?.value||"").trim();if(!extractYoutubeId(url)){alert("먼저 올바른 YouTube 주소를 입력해 주세요.");return}if(!name){alert("즐겨찾기 이름을 적어 주세요.");return}const a=getPlayFavorites();a.push({id:Date.now(),name,url});savePlayFavorites(a);document.getElementById("playFavName").value="";renderPlayFavorites()}
+    function playFavorite(id){const x=getPlayFavorites().find(v=>v.id===id);if(!x)return;const input=document.getElementById("playUrlInput");if(input)input.value=x.url;setPlayYoutube(x.url,true);document.getElementById("playSettingsPanel")?.classList.remove("open")}
+    function editPlayFavorite(id){const a=getPlayFavorites(),x=a.find(v=>v.id===id);if(!x)return;const name=prompt("즐겨찾기 이름",x.name);if(name===null)return;const n=name.trim();if(!n)return;const url=prompt("YouTube 주소",x.url);if(url===null)return;if(!extractYoutubeId(url)){alert("올바른 YouTube 주소가 아닙니다.");return}x.name=n;x.url=url.trim();savePlayFavorites(a);renderPlayFavorites()}
+    function deletePlayFavorite(id){const a=getPlayFavorites(),x=a.find(v=>v.id===id);if(!x||!confirm(`‘${x.name}’ 즐겨찾기를 삭제할까요?`))return;savePlayFavorites(a.filter(v=>v.id!==id));renderPlayFavorites()}
+    function playEsc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+    function renderPlayFavorites(){const box=document.getElementById("playFavList");if(!box)return;const a=getPlayFavorites();box.innerHTML=a.length?a.map(x=>`<div class="play-fav-item"><button class="play-fav-main" onclick="playFavorite(${Number(x.id)})"><span class="play-fav-name-text">${playEsc(x.name)}</span><span class="play-fav-url">${playEsc(x.url)}</span></button><button class="play-fav-edit" onclick="editPlayFavorite(${Number(x.id)})" title="수정">✎</button><button class="play-fav-del" onclick="deletePlayFavorite(${Number(x.id)})" title="삭제">✕</button></div>`).join(""):`<div class="play-fav-empty">저장된 즐겨찾기가 없습니다.</div>`}
     function updatePlayDisplay() {
-      const page = document.getElementById("playPage"); if (!page || page.style.display !== "flex") return;
-      const time = document.getElementById("playHudTime"), sub = document.getElementById("playHudSub"), controls = document.getElementById("playControls");
-      let today = getTodayTotalSeconds();
-      if (onItState === "running") today += Math.max(0, getCurrentOnItElapsed() - sessionSeconds);
-      if (sub) sub.textContent = formatTodayHours(today);
-      if (onItState === "running" || onItState === "paused" || sessionSeconds > 0) {
-        if (time) time.textContent = formatOnIt(getCurrentOnItElapsed());
-        if (controls) controls.innerHTML = `<button class="control-button ${onItState==='running'?'active-glow-play':''}" onclick="startSession();updatePlayDisplay()">▶</button><button class="control-button ${onItState==='paused'?'active-glow-pause':''}" onclick="pauseSession();updatePlayDisplay()">Ⅱ</button><button class="control-button" onclick="stopSession();updatePlayDisplay()">■</button>`;
-      } else if (timerState === "running" || timerState === "paused" || timerState === "finished") {
-        let remain = timerPhaseRemainingAtPause;
-        if (timerState === "running" && timerPhaseStartTime !== null) remain = Math.max(0, timerPhaseRemainingAtPause - Math.floor((Date.now()-timerPhaseStartTime)/1000));
-        if (timerState === "finished") remain = 0;
-        if (time) time.textContent = formatTimer(remain);
-        if (sub) sub.innerHTML = timerState === 'finished' ? 'FINISHED' : timerPhases.map((_,i)=>`<span class="phase-dot ${i<currentPhaseIndex?'done':i===currentPhaseIndex?'current':''}"></span>`).join('');
-        if (controls) controls.innerHTML = `<button class="control-button ${timerState==='running'?'active-glow-play':''}" onclick="resumeTimer();updatePlayDisplay()">▶</button><button class="control-button ${timerState==='paused'?'active-glow-pause':''}" onclick="pauseTimer();updatePlayDisplay()">Ⅱ</button><button class="control-button" onclick="stopTimer();updatePlayDisplay()">■</button>`;
-      } else {
-        if (time) time.textContent = "";
-        if (controls) controls.innerHTML = "";
-      }
+      const page=document.getElementById("playPage");if(!page||page.style.display!=="flex")return;const time=document.getElementById("playHudTime"),sub=document.getElementById("playHudSub"),controls=document.getElementById("playControls");let today=getTodayTotalSeconds();if(onItState==="running")today+=Math.max(0,getCurrentOnItElapsed()-sessionSeconds);if(sub)sub.textContent=formatTodayHours(today);
+      if(onItState==="running"||onItState==="paused"||sessionSeconds>0){if(time)time.textContent=formatOnIt(getCurrentOnItElapsed());if(controls)controls.innerHTML=`<button class="control-button ${onItState==='running'?'active-glow-play':''}" onclick="startSession();updatePlayDisplay()">▶</button><button class="control-button ${onItState==='paused'?'active-glow-pause':''}" onclick="pauseSession();updatePlayDisplay()">Ⅱ</button><button class="control-button" onclick="stopSession();updatePlayDisplay()">■</button>`}
+      else if(timerState==="running"||timerState==="paused"||timerState==="finished"){let remain=timerPhaseRemainingAtPause;if(timerState==="running"&&timerPhaseStartTime!==null)remain=Math.max(0,timerPhaseRemainingAtPause-Math.floor((Date.now()-timerPhaseStartTime)/1000));if(timerState==="finished")remain=0;if(time)time.textContent=formatTimer(remain);if(sub)sub.innerHTML=timerState==='finished'?'FINISHED':timerPhases.map((_,i)=>`<span class="phase-dot ${i<currentPhaseIndex?'done':i===currentPhaseIndex?'current':''}"></span>`).join('');if(controls)controls.innerHTML=`<button class="control-button ${timerState==='running'?'active-glow-play':''}" onclick="resumeTimer();updatePlayDisplay()">▶</button><button class="control-button ${timerState==='paused'?'active-glow-pause':''}" onclick="pauseTimer();updatePlayDisplay()">Ⅱ</button><button class="control-button" onclick="stopTimer();updatePlayDisplay()">■</button>`}
+      else{if(time)time.textContent="";if(controls)controls.innerHTML=""}
     }
 
 
