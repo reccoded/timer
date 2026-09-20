@@ -1458,7 +1458,32 @@
       border-color:#d8aaa5;
     }
 
-  </style>
+
+    /* ===== Play · YouTube focus player ===== */
+    .play-page{position:relative;min-height:100vh;width:100%;overflow:hidden;background:#050505;color:#fff;isolation:isolate}
+    .play-video-stage{position:absolute;inset:0;background:#050505;overflow:hidden}
+    .play-video-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#050505}
+    .play-video-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:32px;color:rgba(255,255,255,.72);font-size:14px;text-align:center;letter-spacing:.02em;background:radial-gradient(circle at 50% 40%,#222 0,#0c0c0c 45%,#050505 100%)}
+    .play-video-empty.hidden{display:none}
+    .play-hud{position:absolute;right:28px;top:24px;z-index:40;width:250px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;transition:opacity .2s ease,transform .2s ease}
+    .play-hud-time{width:100%;font-size:clamp(30px,4vw,52px);font-weight:300;line-height:1;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:.02em;text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 2px rgba(0,0,0,.95)}
+    .play-hud-sub{width:100%;min-height:18px;display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;font-size:14px;font-weight:500;letter-spacing:.14em;text-shadow:0 1px 2px #000,0 2px 8px rgba(0,0,0,.95)}
+    .play-hud .controls{transform:scale(.92);transform-origin:center top}
+    .play-tools{position:absolute;left:74px;bottom:18px;z-index:42;display:flex;gap:8px;align-items:center}
+    .play-tool-btn{height:36px;padding:0 12px;border:1px solid rgba(255,255,255,.24);border-radius:10px;background:rgba(10,10,10,.58);color:#fff;font-size:12px;cursor:pointer;backdrop-filter:blur(10px);box-shadow:0 4px 18px rgba(0,0,0,.18)}
+    .play-tool-btn:hover{background:rgba(20,20,20,.75)}
+    .play-url-panel{position:absolute;left:74px;bottom:62px;z-index:43;width:min(520px,calc(100vw - 100px));padding:12px;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(12,12,12,.82);backdrop-filter:blur(14px);box-shadow:0 14px 34px rgba(0,0,0,.3);display:none;gap:8px}
+    .play-url-panel.open{display:flex}
+    .play-url-input{min-width:0;flex:1;height:38px;padding:0 12px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.1);color:#fff;outline:none;font-size:13px}
+    .play-url-input::placeholder{color:rgba(255,255,255,.5)}
+    .play-url-load{height:38px;padding:0 14px;border:0;border-radius:9px;background:#fff;color:#222;cursor:pointer;font-weight:600}
+    .play-hide-hud{position:absolute;right:18px;top:18px;z-index:46;width:34px;height:34px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(10,10,10,.5);color:#fff;cursor:pointer;backdrop-filter:blur(10px);font-size:15px}
+    .play-page.hud-hidden .play-hud{opacity:0;pointer-events:none;transform:translateY(-8px)}
+    .play-page.hud-hidden .play-hide-hud{opacity:.42}
+    body:has(#playPage[style*="flex"]) .quick-memo-button{display:flex}
+    @media(max-width:700px){.play-hud{right:14px;top:18px;width:210px}.play-hud-time{font-size:34px}.play-tools{left:14px;bottom:14px}.play-url-panel{left:14px;bottom:58px;width:calc(100vw - 28px)}.play-hide-hud{right:10px;top:10px}}
+
+</style>
 </head>
 
 <body>
@@ -1485,9 +1510,10 @@
     <button class="menu-close-btn" onclick="closeMenu()">✕</button>
     <button class="menu-item" onclick="showOnIt()">Count Up</button>
     <button class="menu-item" onclick="showTimer()">Timer</button>
+    <button class="menu-item" onclick="showPlay()">Play</button>
     <button class="menu-item" onclick="showRecords()">History</button>
     <button class="menu-item" onclick="showTimeLog()">Day Log</button>
-    <button class="menu-item" onclick="showTodo()">TODO</button>
+    <button class="menu-item" onclick="showTodo()">Todo</button>
     <button class="menu-item" onclick="showSettings()">Settings</button>
   </nav>
 
@@ -1507,6 +1533,27 @@
   </main>
 
   <section class="timer-page" id="timerPage" style="display: none;"></section>
+
+  <section class="play-page" id="playPage" style="display: none;">
+    <div class="play-video-stage">
+      <div class="play-video-empty" id="playVideoEmpty">YouTube 영상 또는 라이브 주소를 불러오면 여기에 재생됩니다.</div>
+      <iframe id="playYoutubeFrame" title="YouTube player" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+    </div>
+    <div class="play-hud" id="playHud">
+      <div class="play-hud-time background-readable" id="playHudTime">00&thinsp;00&thinsp;00</div>
+      <div class="play-hud-sub background-readable" id="playHudSub">TODAY · 0.0h</div>
+      <div class="controls" id="playControls"></div>
+    </div>
+    <button class="play-hide-hud" id="playHideHudBtn" onclick="togglePlayHud()" aria-label="타이머 숨기기" title="타이머 숨기기">◐</button>
+    <div class="play-tools">
+      <button class="play-tool-btn" onclick="togglePlayUrlPanel()">YouTube</button>
+      <button class="play-tool-btn" id="playSoundBtn" onclick="togglePlaySound()">🔇 음소거</button>
+    </div>
+    <div class="play-url-panel" id="playUrlPanel">
+      <input class="play-url-input" id="playUrlInput" type="text" inputmode="url" placeholder="YouTube 영상 / 라이브 주소 붙여넣기" onkeydown="if(event.key==='Enter') loadPlayYoutube()">
+      <button class="play-url-load" onclick="loadPlayYoutube()">불러오기</button>
+    </div>
+  </section>
 
   <section class="records-page" id="recordsPage" style="display: none;">
     <div class="summary-grid">
@@ -1956,6 +2003,7 @@
       closeQuickMemo();
       document.getElementById("onitPage").style.display = "none";
       document.getElementById("timerPage").style.display = "none";
+      document.getElementById("playPage").style.display = "none";
       document.getElementById("recordsPage").style.display = "none";
       document.getElementById("timeLogPage").style.display = "none";
       document.getElementById("todoPage").style.display = "none";
@@ -2010,7 +2058,7 @@
       closeMenu();
     }
 
-    function showTodo(){hideAllPages();document.getElementById("todoPage").style.display="block";document.getElementById("headerTitle").textContent="TODO";renderTodo();closeMenu();}
+    function showTodo(){hideAllPages();document.getElementById("todoPage").style.display="block";document.getElementById("headerTitle").textContent="Todo";renderTodo();closeMenu();}
 
     function showSettings() {
       hideAllPages();
@@ -2070,6 +2118,7 @@
       }
 
       document.getElementById("totalTime").textContent = formatTodayHours(todayTotal);
+      updatePlayDisplay();
     }
 
     function startSession() {
@@ -2304,6 +2353,7 @@
         return `<span class="phase-dot ${stateClass}"></span>`;
       }).join("");
       phaseInfo.setAttribute("aria-label", `${currentPhaseIndex + 1} / ${timerPhases.length} 단계`);
+      updatePlayDisplay();
     }
 
     function startTimerSetup() {
@@ -2623,6 +2673,7 @@
       });
 
       localStorage.setItem("onItRecords", JSON.stringify(records));
+      
     }
 
     function renderRatioStats(records) {
@@ -2926,6 +2977,104 @@
     function triggerBackupJSONImport(){document.getElementById("backupJsonInput").click()}
     function importBackupJSON(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(String(e.target.result||""));if(!d||d.format!=="OnItRecordsBackup"||!Array.isArray(d.records)||!d.timeLog||typeof d.timeLog!=="object"||!Array.isArray(d.todo)||!Array.isArray(d.todoCompleted))throw 0;if(!confirm("현재 History, Day Log, TODO 기록을 백업 파일의 내용으로 교체할까요?")){input.value="";return}localStorage.setItem("onItRecords",JSON.stringify(d.records));localStorage.setItem(TIMELOG_KEY,JSON.stringify(d.timeLog));localStorage.setItem(TODO_KEY,JSON.stringify(d.todo));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(d.todoCompleted));updateDisplay();alert("전체 기록을 복원했습니다.")}catch(_){alert("올바른 On It 통합 백업 JSON 파일이 아닙니다.")}input.value=""};r.readAsText(f)}
     function clearIntegratedRecords(){if(!confirm("History, Day Log, TODO 현재 목록과 완료 기록을 모두 초기화할까요?\n작업 태그, Timer 프리셋, 알람, 배경사진 등 설정은 유지됩니다."))return;localStorage.removeItem("onItRecords");localStorage.removeItem(TIMELOG_KEY);localStorage.removeItem(TODO_KEY);localStorage.removeItem(TODO_HISTORY_KEY);updateDisplay();renderTodo();alert("기록 데이터만 모두 초기화했습니다.")}
+
+
+
+    // ===== PLAY · YouTube focus player =====
+    const PLAY_YOUTUBE_KEY = "onItPlayYoutubeUrl";
+    const PLAY_MUTED_KEY = "onItPlayYoutubeMuted";
+    let playYoutubeMuted = localStorage.getItem(PLAY_MUTED_KEY) !== "false";
+
+    function showPlay() {
+      hideAllPages();
+      document.getElementById("playPage").style.display = "flex";
+      document.getElementById("headerTitle").textContent = "Play";
+      closeMenu();
+      updatePlayDisplay();
+      const saved = localStorage.getItem(PLAY_YOUTUBE_KEY) || "";
+      const input = document.getElementById("playUrlInput");
+      if (input && !input.value) input.value = saved;
+      const frame = document.getElementById("playYoutubeFrame");
+      if (saved && frame && !frame.src) setPlayYoutube(saved, false);
+      updatePlaySoundButton();
+    }
+
+    function extractYoutubeId(value) {
+      const raw = String(value || "").trim();
+      if (/^[A-Za-z0-9_-]{11}$/.test(raw)) return raw;
+      try {
+        const u = new URL(raw);
+        const host = u.hostname.replace(/^www\./, "");
+        if (host === "youtu.be") return u.pathname.split("/").filter(Boolean)[0] || "";
+        if (host.endsWith("youtube.com")) {
+          if (u.pathname === "/watch") return u.searchParams.get("v") || "";
+          const parts = u.pathname.split("/").filter(Boolean);
+          if (["embed","shorts","live"].includes(parts[0])) return parts[1] || "";
+        }
+      } catch (_) {}
+      return "";
+    }
+
+    function setPlayYoutube(value, save=true) {
+      const id = extractYoutubeId(value);
+      if (!id) { alert("YouTube 영상 또는 라이브 주소를 확인해 주세요."); return false; }
+      const frame = document.getElementById("playYoutubeFrame");
+      if (!frame) return false;
+      const mute = playYoutubeMuted ? 1 : 0;
+      frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&controls=1&rel=0&playsinline=1&enablejsapi=1&mute=${mute}`;
+      document.getElementById("playVideoEmpty")?.classList.add("hidden");
+      if (save) localStorage.setItem(PLAY_YOUTUBE_KEY, String(value).trim());
+      return true;
+    }
+
+    function loadPlayYoutube() {
+      const input = document.getElementById("playUrlInput");
+      if (setPlayYoutube(input?.value || "", true)) document.getElementById("playUrlPanel")?.classList.remove("open");
+    }
+
+    function togglePlayUrlPanel() { document.getElementById("playUrlPanel")?.classList.toggle("open"); }
+    function togglePlayHud() { document.getElementById("playPage")?.classList.toggle("hud-hidden"); }
+
+    function sendYoutubeCommand(func, args=[]) {
+      const frame = document.getElementById("playYoutubeFrame");
+      if (!frame?.contentWindow || !frame.src) return;
+      frame.contentWindow.postMessage(JSON.stringify({event:"command",func,args}), "*");
+    }
+
+    function togglePlaySound() {
+      playYoutubeMuted = !playYoutubeMuted;
+      localStorage.setItem(PLAY_MUTED_KEY, String(playYoutubeMuted));
+      sendYoutubeCommand(playYoutubeMuted ? "mute" : "unMute");
+      updatePlaySoundButton();
+    }
+
+    function updatePlaySoundButton() {
+      const btn = document.getElementById("playSoundBtn");
+      if (btn) btn.textContent = playYoutubeMuted ? "🔇 음소거" : "🔊 소리 켬";
+    }
+
+    function updatePlayDisplay() {
+      const page = document.getElementById("playPage"); if (!page || page.style.display !== "flex") return;
+      const time = document.getElementById("playHudTime"), sub = document.getElementById("playHudSub"), controls = document.getElementById("playControls");
+      let today = getTodayTotalSeconds();
+      if (onItState === "running") today += Math.max(0, getCurrentOnItElapsed() - sessionSeconds);
+      if (sub) sub.textContent = formatTodayHours(today);
+      if (onItState === "running" || onItState === "paused" || sessionSeconds > 0) {
+        if (time) time.textContent = formatOnIt(getCurrentOnItElapsed());
+        if (controls) controls.innerHTML = `<button class="control-button ${onItState==='running'?'active-glow-play':''}" onclick="startSession();updatePlayDisplay()">▶</button><button class="control-button ${onItState==='paused'?'active-glow-pause':''}" onclick="pauseSession();updatePlayDisplay()">Ⅱ</button><button class="control-button" onclick="stopSession();updatePlayDisplay()">■</button>`;
+      } else if (timerState === "running" || timerState === "paused" || timerState === "finished") {
+        let remain = timerPhaseRemainingAtPause;
+        if (timerState === "running" && timerPhaseStartTime !== null) remain = Math.max(0, timerPhaseRemainingAtPause - Math.floor((Date.now()-timerPhaseStartTime)/1000));
+        if (timerState === "finished") remain = 0;
+        if (time) time.textContent = formatTimer(remain);
+        if (sub) sub.innerHTML = timerState === 'finished' ? 'FINISHED' : timerPhases.map((_,i)=>`<span class="phase-dot ${i<currentPhaseIndex?'done':i===currentPhaseIndex?'current':''}"></span>`).join('');
+        if (controls) controls.innerHTML = `<button class="control-button ${timerState==='running'?'active-glow-play':''}" onclick="resumeTimer();updatePlayDisplay()">▶</button><button class="control-button ${timerState==='paused'?'active-glow-pause':''}" onclick="pauseTimer();updatePlayDisplay()">Ⅱ</button><button class="control-button" onclick="stopTimer();updatePlayDisplay()">■</button>`;
+      } else {
+        if (time) time.textContent = "";
+        if (controls) controls.innerHTML = "";
+      }
+    }
+
 
     // ===== Time Log =====
     const TIMELOG_KEY = "onItTimeLogRecords";
