@@ -210,7 +210,6 @@
 
     body:has(#recordsPage[style*="block"]) .quick-memo-button,
     body:has(#timeLogPage[style*="block"]) .quick-memo-button,
-    body:has(#todoPage[style*="block"]) .quick-memo-button,
     body:has(#settingsPage[style*="block"]) .quick-memo-button {
       display: none;
     }
@@ -1318,12 +1317,9 @@
     }
 
 .side-menu button.menu-item{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-weight:500;letter-spacing:.045em}
-.todo-page{min-height:100vh;padding:80px 24px 40px;max-width:700px;margin:0 auto}.todo-add-row{display:flex;gap:8px;margin-bottom:22px}.todo-add-row input{flex:1;min-width:0;padding:12px 14px;border-radius:9px;border:1px solid #333;background:#181818;color:#fff;font-size:15px;outline:none}.todo-add-row button,.todo-actions button{border:1px solid #333;background:#1c1c1c;color:#fff;border-radius:8px;cursor:pointer}.todo-add-row button{padding:11px 16px}.todo-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #222}.todo-text{flex:1;min-width:0;word-break:break-word}.todo-actions{display:flex;gap:8px}.todo-actions button{min-width:38px;padding:7px 9px}.todo-complete-btn{color:#9fd6a8!important}.todo-delete-btn{color:#aaa!important}.todo-history-title{color:#aaa;font-size:15px;margin:32px 0 8px}.todo-history-item{display:grid;grid-template-columns:105px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid #1c1c1c;font-size:14px}.todo-history-date{color:#777}.todo-empty{color:#666;text-align:center;padding:24px 0;font-size:14px}.settings-option button.backup-danger{color:#ff6b6b;border-color:rgba(255,85,85,.35)}#backupJsonInput{display:none}
+#backupJsonInput{display:none}
 
 
-    .todo-history-details { margin-top: 30px; }
-    .todo-history-details > summary { cursor: pointer; user-select: none; list-style-position: outside; }
-    .todo-history-details[open] > summary { margin-bottom: 8px; }
 
   
 
@@ -1337,10 +1333,9 @@
     .menu-close-btn { color:#716a5e; }
     .menu-close-btn:hover { color:#2d2a24; }
 
-    .records-page, .timelog-page, .todo-page, .settings-page { background:var(--warm-bg); color:var(--warm-text); }
+    .records-page, .timelog-page, .settings-page { background:var(--warm-bg); color:var(--warm-text); }
     body:has(#recordsPage[style*="block"]) .menu-button,
     body:has(#timeLogPage[style*="block"]) .menu-button,
-    body:has(#todoPage[style*="block"]) .menu-button,
     body:has(#settingsPage[style*="block"]) .menu-button { color:#2d2a24; text-shadow:none; }
 
     /* History */
@@ -1400,21 +1395,6 @@
     .timelog-page .timelog-data-title { color:#5f594f; }
     .timelog-page .timelog-data-actions .danger { background:#f7e8e6; color:var(--warm-danger); border-color:#d8aaa5; }
 
-    /* TODO */
-    .todo-page .todo-add-row input { background:var(--warm-panel); color:var(--warm-text); border-color:var(--warm-line); }
-    .todo-page .todo-add-row button, .todo-page .todo-actions button, .todo-page .todo-data-actions button { background:var(--warm-panel); color:var(--warm-text); border-color:var(--warm-line); }
-    .todo-page .todo-item { border-color:#d9d0c3; }
-    .todo-page .todo-complete-btn { color:#b44747 !important; background:#f7e8e6 !important; border-color:#dfb5b0 !important; }
-    .todo-page .todo-delete-btn { color:#6f685e !important; }
-    .todo-page .todo-history-title { color:#5f594f; }
-    .todo-page .todo-history-item { border-color:#ddd4c8; }
-    .todo-page .todo-history-date, .todo-page .todo-empty { color:#756e64; }
-    .todo-data-box { margin-top:28px; padding-top:18px; border-top:1px solid #d7cec1; }
-    .todo-data-title { font-size:16px; color:#5f594f; margin-bottom:10px; }
-    .todo-data-actions { display:flex; gap:8px; flex-wrap:wrap; }
-    .todo-data-actions button { padding:9px 12px; border-radius:8px; cursor:pointer; font-size:13px; }
-    .todo-data-actions button.danger { background:#f7e8e6; color:var(--warm-danger); border-color:#d8aaa5; }
-    #todoCsvInput { display:none; }
 
     /* Settings */
     .settings-page .settings-option { border-color:#d8cfc2; }
@@ -1431,32 +1411,15 @@
     .settings-page .settings-option button.backup-danger { background:#f7e8e6; color:var(--warm-danger); border-color:#d8aaa5; }
 
     @media (max-width:600px) {
-      .records-page, .timelog-page, .todo-page, .settings-page { min-height:100dvh; }
+      .records-page, .timelog-page, .settings-page { min-height:100dvh; }
       .records-page .record-item { padding:12px 11px 12px 13px; gap:8px; }
       .records-page .record-actions { gap:5px; }
       .records-page .summary-card { padding:14px 7px; }
       .records-page .summary-card-value { font-size:16px; }
-      .todo-data-actions, .timelog-data-actions { gap:7px; }
     }
 
     /* Final data-management alignment */
     .records-page .records-toolbar-bottom { margin-top: 28px; margin-bottom: 0; }
-    .todo-page .todo-data-box { margin-top:18px; padding-top:18px; border-top:1px solid #d7cec1; }
-    .todo-page .todo-data-actions { display:flex; gap:8px; flex-wrap:wrap; }
-    .todo-page .todo-data-actions button {
-      padding:9px 12px;
-      font-size:13px;
-      border:1px solid var(--warm-line);
-      background:var(--warm-panel);
-      color:var(--warm-text);
-      border-radius:8px;
-      cursor:pointer;
-    }
-    .todo-page .todo-data-actions button.danger {
-      background:#f7e8e6;
-      color:var(--warm-danger);
-      border-color:#d8aaa5;
-    }
 
 
     /* ===== Play · YouTube focus player ===== */
@@ -1515,7 +1478,6 @@
     <button class="menu-item" onclick="showPlay()">Play</button>
     <button class="menu-item" onclick="showRecords()">History</button>
     <button class="menu-item" onclick="showTimeLog()">Day Log</button>
-    <button class="menu-item" onclick="showTodo()">Todo</button>
     <button class="menu-item" onclick="showSettings()">Settings</button>
   </nav>
 
@@ -1656,24 +1618,9 @@
     </div>
   </section>
 
-  <section class="todo-page" id="todoPage" style="display: none;"><div class="todo-add-row"><input type="text" id="todoInput" placeholder="할 일 입력..." onkeydown="if(event.key==='Enter') addTodo()"><button onclick="addTodo()">추가</button></div><div id="todoList"></div>
-    <details class="todo-history-details">
-      <summary class="todo-history-title">완료 기록</summary>
-      <div id="todoHistory"></div>
-    </details>
-    <div class="todo-data-box">
-      <div class="todo-data-title">데이터 관리</div>
-      <div class="todo-data-actions">
-        <button onclick="exportTodoCSV()">CSV 내보내기</button>
-        <button onclick="triggerTodoImport()">CSV 불러오기</button>
-        <button class="danger" onclick="clearTodoRecords()">TODO 기록 삭제</button>
-      </div>
-      <input type="file" id="todoCsvInput" accept=".csv,text/csv" onchange="importTodoCSV(this)">
-    </div>
-  </section>
 
   <section class="settings-page" id="settingsPage" style="display: none;">
-    <div class="settings-section"><div class="settings-title">통합 기록 백업</div><div class="settings-option"><div class="settings-option-label">전체 기록 백업</div><button onclick="exportBackupJSON()">JSON 내보내기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 복원</div><button onclick="triggerBackupJSONImport()">JSON 불러오기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 초기화</div><button class="backup-danger" onclick="clearIntegratedRecords()">초기화</button></div><div class="settings-current">History · Day Log · TODO 현재 목록 · TODO 완료 기록</div><input type="file" id="backupJsonInput" accept=".json,application/json" onchange="importBackupJSON(this)"></div>
+    <div class="settings-section"><div class="settings-title">통합 기록 백업</div><div class="settings-option"><div class="settings-option-label">전체 기록 백업</div><button onclick="exportBackupJSON()">JSON 내보내기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 복원</div><button onclick="triggerBackupJSONImport()">JSON 불러오기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 초기화</div><button class="backup-danger" onclick="clearIntegratedRecords()">초기화</button></div><div class="settings-current">History · Day Log</div><input type="file" id="backupJsonInput" accept=".json,application/json" onchange="importBackupJSON(this)"></div>
 
     <div class="settings-section background-settings">
       <div class="settings-title">배경</div>
@@ -2017,7 +1964,6 @@
       document.getElementById("playPage").style.display = "none";
       document.getElementById("recordsPage").style.display = "none";
       document.getElementById("timeLogPage").style.display = "none";
-      document.getElementById("todoPage").style.display = "none";
       document.getElementById("settingsPage").style.display = "none";
     }
 
@@ -2069,7 +2015,6 @@
       closeMenu();
     }
 
-    function showTodo(){hideAllPages();document.getElementById("todoPage").style.display="block";document.getElementById("headerTitle").textContent="Todo";renderTodo();closeMenu();}
 
     function showSettings() {
       hideAllPages();
@@ -2080,12 +2025,74 @@
       closeMenu();
     }
 
+    // ===== Durable record storage (IndexedDB) =====
+    const ONIT_DATA_DB = "ONIT_DATA_DB";
+    const ONIT_DATA_DB_VERSION = 1;
+    const ONIT_DATA_STORE = "data";
+    let onItRecordsCache = [];
+    let timeLogCache = {};
+    let onItDataDb = null;
+
+    function openOnItDataDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(ONIT_DATA_DB, ONIT_DATA_DB_VERSION);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains(ONIT_DATA_STORE)) db.createObjectStore(ONIT_DATA_STORE);
+        };
+        req.onsuccess = () => { onItDataDb = req.result; resolve(onItDataDb); };
+        req.onerror = () => reject(req.error);
+      });
+    }
+    function idbGet(key) {
+      return new Promise((resolve, reject) => {
+        const tx = onItDataDb.transaction(ONIT_DATA_STORE, "readonly");
+        const req = tx.objectStore(ONIT_DATA_STORE).get(key);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    function idbSet(key, value) {
+      return new Promise((resolve, reject) => {
+        const tx = onItDataDb.transaction(ONIT_DATA_STORE, "readwrite");
+        tx.objectStore(ONIT_DATA_STORE).put(value, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+    async function initOnItDataStorage() {
+      await openOnItDataDB();
+      let records = await idbGet("records");
+      let timeLog = await idbGet("timeLog");
+      // One-time migration from the former localStorage record stores.
+      if (!Array.isArray(records)) {
+        try { records = JSON.parse(localStorage.getItem("onItRecords")) || []; } catch (_) { records = []; }
+        await idbSet("records", records);
+      }
+      if (!timeLog || typeof timeLog !== "object" || Array.isArray(timeLog)) {
+        try { timeLog = JSON.parse(localStorage.getItem("onItTimeLogRecords")) || {}; } catch (_) { timeLog = {}; }
+        await idbSet("timeLog", timeLog);
+      }
+      onItRecordsCache = records;
+      timeLogCache = timeLog;
+      // Remove legacy copies only after IndexedDB writes have succeeded.
+      localStorage.removeItem("onItRecords");
+      localStorage.removeItem("onItTimeLogRecords");
+      localStorage.removeItem("onItTodoItems");
+      localStorage.removeItem("onItTodoCompleted");
+    }
+    function loadRecordsData() { return onItRecordsCache; }
+    function saveRecordsData(records) {
+      onItRecordsCache = Array.isArray(records) ? records : [];
+      if (onItDataDb) idbSet("records", onItRecordsCache).catch(console.error);
+    }
+
     let onItState = "idle";
     let sessionSeconds = 0;
     let onItStartTime = null;
 
     function getTodayTotalSeconds() {
-      const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      const records = loadRecordsData();
       const today = getToday();
       return records
         .filter(r => r.date === today)
@@ -2640,7 +2647,7 @@
     }
 
     function getRangeTotals() {
-      const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      const records = loadRecordsData();
       const now = new Date();
       const todayStr = getToday();
 
@@ -2674,7 +2681,7 @@
       seconds = Math.max(0, Math.floor(Number(seconds) || 0));
       if (seconds <= 0) return;
 
-      const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      const records = loadRecordsData();
       records.push({
         id: Date.now() + Math.floor(Math.random() * 1000),
         date: date || getToday(),
@@ -2683,7 +2690,7 @@
         memo: memo || ""
       });
 
-      localStorage.setItem("onItRecords", JSON.stringify(records));
+      saveRecordsData(records);
       
     }
 
@@ -2741,7 +2748,7 @@
       const filterSelect = document.getElementById("recordTagFilter");
       const monthOnlyCheckbox = document.getElementById("currentMonthOnlyCheckbox");
 
-      const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      const records = loadRecordsData();
       const activeTags = getCustomTags();
       
       if (filterSelect) {
@@ -2825,7 +2832,7 @@
     }
 
     function editRecord(id) {
-      let records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      let records = loadRecordsData();
       const item = records.find(r => r.id === id);
       if (!item) return;
 
@@ -2861,7 +2868,7 @@
       item.seconds = parsedMinutes * 60;
       item.type = trimmedTag;
       item.memo = memoInput.trim();
-      localStorage.setItem("onItRecords", JSON.stringify(records));
+      saveRecordsData(records);
 
       renderRecords();
       updateDisplay();
@@ -2870,23 +2877,23 @@
     function deleteRecord(id) {
       if (!confirm("기록을 삭제할까요?")) return;
 
-      let records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      let records = loadRecordsData();
       records = records.filter(r => r.id !== id);
 
-      localStorage.setItem("onItRecords", JSON.stringify(records));
+      saveRecordsData(records);
       renderRecords();
       updateDisplay();
     }
 
     function clearAllRecords() {
-      const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      const records = loadRecordsData();
       if (records.length === 0) {
         alert("삭제할 기록이 없습니다.");
         return;
       }
 
       if (confirm("정말로 모든 기록을 삭제하시겠습니까?\n이 작업은 복구할 수 없습니다.")) {
-        localStorage.removeItem("onItRecords");
+        saveRecordsData([]);
         renderRecords();
         updateDisplay();
         alert("모든 기록이 초기화되었습니다.");
@@ -2894,7 +2901,7 @@
     }
 
     function exportRecordsCSV() {
-      const records = JSON.parse(localStorage.getItem("onItRecords")) || [];
+      const records = loadRecordsData();
       if (records.length === 0) {
         alert("내보낼 기록이 없습니다.");
         return;
@@ -2927,7 +2934,7 @@
       reader.onload = function(e) {
         const text = e.target.result;
         const lines = text.split("\n");
-        const existingRecords = JSON.parse(localStorage.getItem("onItRecords")) || [];
+        const existingRecords = loadRecordsData();
         let importedCount = 0;
 
         for (let i = 1; i < lines.length; i++) {
@@ -2955,7 +2962,7 @@
         }
 
         if (importedCount > 0) {
-          localStorage.setItem("onItRecords", JSON.stringify(existingRecords));
+          saveRecordsData(existingRecords);
           renderRecords();
           updateDisplay();
           alert(`${importedCount}개의 기록을 성공적으로 불러왔습니다.`);
@@ -2970,24 +2977,33 @@
 
 
 
-    const TODO_KEY="onItTodoItems",TODO_HISTORY_KEY="onItTodoCompleted";
-    function loadTodoItems(){try{return JSON.parse(localStorage.getItem(TODO_KEY))||[]}catch(_){return[]}}
-    function loadTodoCompleted(){try{return JSON.parse(localStorage.getItem(TODO_HISTORY_KEY))||[]}catch(_){return[]}}
-    function todoEsc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-    function addTodo(){const i=document.getElementById("todoInput");if(!i)return;const x=i.value.trim();if(!x)return;const a=loadTodoItems();a.push({id:Date.now()+Math.floor(Math.random()*1000),text:x});localStorage.setItem(TODO_KEY,JSON.stringify(a));i.value="";renderTodo();i.focus()}
-    function deleteTodo(id){localStorage.setItem(TODO_KEY,JSON.stringify(loadTodoItems().filter(x=>x.id!==id)));renderTodo()}
-    function completeTodo(id){const a=loadTodoItems(),x=a.find(v=>v.id===id);if(!x)return;const h=loadTodoCompleted();h.unshift({id:Date.now()+Math.floor(Math.random()*1000),date:getToday(),text:x.text});localStorage.setItem(TODO_KEY,JSON.stringify(a.filter(v=>v.id!==id)));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(h));renderTodo()}
-    function renderTodo(){const l=document.getElementById("todoList"),h=document.getElementById("todoHistory");if(!l||!h)return;const a=loadTodoItems();l.innerHTML=a.length?a.map(x=>`<div class="todo-item"><div class="todo-text">${todoEsc(x.text)}</div><div class="todo-actions"><button class="todo-complete-btn" onclick="completeTodo(${Number(x.id)})">✓</button><button class="todo-delete-btn" onclick="deleteTodo(${Number(x.id)})">✕</button></div></div>`).join(""):`<div class="todo-empty">할 일이 없습니다.</div>`;const c=loadTodoCompleted();const visible=c.slice(0,30);h.innerHTML=visible.length?visible.map(x=>`<div class="todo-history-item"><div class="todo-history-date">${todoEsc(x.date)}</div><div>${todoEsc(x.text)}</div></div>`).join(""):`<div class="todo-empty">완료 기록이 없습니다.</div>`}
-    function todoCsvEscape(v){const t=String(v??"");return /[",\n\r]/.test(t)?`"${t.replace(/"/g,'""')}"`:t}
-    function parseTodoCSV(text){const rows=[];let row=[],cell="",quoted=false;for(let i=0;i<text.length;i++){const ch=text[i];if(quoted){if(ch==='"'&&text[i+1]==='"'){cell+='"';i++}else if(ch==='"'){quoted=false}else cell+=ch}else{if(ch==='"')quoted=true;else if(ch===','){row.push(cell);cell=""}else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell=""}else if(ch!=='\r')cell+=ch}}if(cell!==""||row.length){row.push(cell);rows.push(row)}return rows}
-    function exportTodoCSV(){const rows=[["상태","완료일","할 일"]];loadTodoItems().forEach(x=>rows.push(["현재","",x.text]));loadTodoCompleted().forEach(x=>rows.push(["완료",x.date||"",x.text]));const csv='\ufeff'+rows.map(r=>r.map(todoCsvEscape).join(',')).join('\r\n');const u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})),a=document.createElement('a');a.href=u;a.download=`OnIt_TODO_${getToday().replace(/\./g,'-')}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-    function triggerTodoImport(){document.getElementById('todoCsvInput').click()}
-    function importTodoCSV(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const rows=parseTodoCSV(String(e.target.result||'').replace(/^\ufeff/,''));if(!rows.length||rows[0][0]!=="상태"||rows[0][2]!=="할 일")throw 0;const active=[],done=[];rows.slice(1).forEach((row,n)=>{const status=(row[0]||'').trim(),date=(row[1]||'').trim(),text=(row[2]||'').trim();if(!text)return;const id=Date.now()+n+Math.floor(Math.random()*1000);if(status==='현재')active.push({id,text});else if(status==='완료')done.push({id,date,text})});if(!confirm('현재 TODO와 완료 기록을 CSV 파일의 내용으로 교체할까요?')){input.value='';return}localStorage.setItem(TODO_KEY,JSON.stringify(active));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(done));renderTodo();alert('TODO 기록을 불러왔습니다.')}catch(_){alert('올바른 TODO CSV 파일이 아닙니다.')}input.value=''};r.readAsText(f)}
-    function clearTodoRecords(){if(!confirm('현재 TODO와 완료 기록을 모두 삭제할까요?\n이 작업은 복구할 수 없습니다.'))return;localStorage.removeItem(TODO_KEY);localStorage.removeItem(TODO_HISTORY_KEY);renderTodo();alert('TODO 기록을 삭제했습니다.')}
-    function exportBackupJSON(){const b={format:"OnItRecordsBackup",version:1,exportedAt:new Date().toISOString(),records:JSON.parse(localStorage.getItem("onItRecords"))||[],timeLog:loadTimeLogData(),todo:loadTodoItems(),todoCompleted:loadTodoCompleted()};const u=URL.createObjectURL(new Blob([JSON.stringify(b,null,2)],{type:"application/json;charset=utf-8;"})),a=document.createElement("a");a.href=u;a.download=`OnIt_Backup_${getToday().replace(/\./g,"-")}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+    function exportBackupJSON(){
+      const b={format:"OnItRecordsBackup",version:2,exportedAt:new Date().toISOString(),records:loadRecordsData(),timeLog:loadTimeLogData()};
+      const u=URL.createObjectURL(new Blob([JSON.stringify(b,null,2)],{type:"application/json;charset=utf-8;"})),a=document.createElement("a");
+      a.href=u;a.download=`OnIt_backup_${getToday().replace(/\./g,"-")}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
+    }
     function triggerBackupJSONImport(){document.getElementById("backupJsonInput").click()}
-    function importBackupJSON(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(String(e.target.result||""));if(!d||d.format!=="OnItRecordsBackup"||!Array.isArray(d.records)||!d.timeLog||typeof d.timeLog!=="object"||!Array.isArray(d.todo)||!Array.isArray(d.todoCompleted))throw 0;if(!confirm("현재 History, Day Log, TODO 기록을 백업 파일의 내용으로 교체할까요?")){input.value="";return}localStorage.setItem("onItRecords",JSON.stringify(d.records));localStorage.setItem(TIMELOG_KEY,JSON.stringify(d.timeLog));localStorage.setItem(TODO_KEY,JSON.stringify(d.todo));localStorage.setItem(TODO_HISTORY_KEY,JSON.stringify(d.todoCompleted));updateDisplay();alert("전체 기록을 복원했습니다.")}catch(_){alert("올바른 On It 통합 백업 JSON 파일이 아닙니다.")}input.value=""};r.readAsText(f)}
-    function clearIntegratedRecords(){if(!confirm("History, Day Log, TODO 현재 목록과 완료 기록을 모두 초기화할까요?\n작업 태그, Timer 프리셋, 알람, 배경사진 등 설정은 유지됩니다."))return;localStorage.removeItem("onItRecords");localStorage.removeItem(TIMELOG_KEY);localStorage.removeItem(TODO_KEY);localStorage.removeItem(TODO_HISTORY_KEY);updateDisplay();renderTodo();alert("기록 데이터만 모두 초기화했습니다.")}
+    function importBackupJSON(input){
+      const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();
+      r.onload=async e=>{try{
+        const d=JSON.parse(String(e.target.result||""));
+        if(!d||d.format!=="OnItRecordsBackup"||!Array.isArray(d.records)||!d.timeLog||typeof d.timeLog!=="object"||Array.isArray(d.timeLog))throw 0;
+        if(!confirm("현재 History와 Day Log 기록을 백업 파일의 내용으로 교체할까요?")){input.value="";return}
+        onItRecordsCache=d.records;timeLogCache=d.timeLog;
+        await Promise.all([idbSet("records",onItRecordsCache),idbSet("timeLog",timeLogCache)]);
+        updateDisplay();renderRecords();
+        if(document.getElementById("timeLogPage")?.style.display==="block")renderTimeLog();
+        alert("전체 기록을 복원했습니다.");
+      }catch(_){alert("올바른 On It 통합 백업 JSON 파일이 아닙니다.")}input.value=""};r.readAsText(f);
+    }
+    async function clearIntegratedRecords(){
+      if(!confirm("History와 Day Log 기록을 모두 초기화할까요?\n작업 태그, Timer 프리셋, 알람, 배경사진 등 설정은 유지됩니다."))return;
+      onItRecordsCache=[];timeLogCache={};
+      await Promise.all([idbSet("records",[]),idbSet("timeLog",{})]);
+      updateDisplay();renderRecords();
+      if(document.getElementById("timeLogPage")?.style.display==="block")renderTimeLog();
+      alert("기록 데이터만 모두 초기화했습니다.");
+    }
 
 
 
@@ -3064,13 +3080,11 @@
       return timelogDateKey(d);
     }
 
-    function loadTimeLogData() {
-      try { return JSON.parse(localStorage.getItem(TIMELOG_KEY)) || {}; }
-      catch (_) { return {}; }
-    }
+    function loadTimeLogData() { return timeLogCache; }
 
     function saveTimeLogData(data) {
-      localStorage.setItem(TIMELOG_KEY, JSON.stringify(data));
+      timeLogCache = (data && typeof data === "object" && !Array.isArray(data)) ? data : {};
+      if (onItDataDb) idbSet("timeLog", timeLogCache).catch(console.error);
     }
 
     function ensureTimeLogDay(data, key) {
@@ -3422,16 +3436,18 @@
       const data = loadTimeLogData();
       if (Object.keys(data).length === 0) { alert('삭제할 타임로그 기록이 없습니다.'); return; }
       if (!confirm('타임로그 기록을 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.')) return;
-      localStorage.removeItem(TIMELOG_KEY);
+      saveTimeLogData({});
       renderTimeLog();
       alert('타임로그 기록이 모두 삭제되었습니다.');
     }
 
 
-    window.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener("DOMContentLoaded", async () => {
       initPWA();
       loadBackgroundImage();
       renderTagChips();
+      try { await initOnItDataStorage(); }
+      catch (err) { console.error(err); alert("기록 저장소를 여는 중 문제가 발생했습니다. 새 기록을 시작하기 전에 백업 파일을 확인해 주세요."); }
       updateDisplay();
       setInterval(updateDisplay, 500);
     });
