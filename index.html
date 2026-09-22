@@ -2491,43 +2491,59 @@
       runTimerLoop();
     }
 
+    function syncTimerToNow({ alertOnCross = true } = {}) {
+      if (timerState !== "running" || timerPhaseStartTime === null || !timerPhases.length) return;
+
+      const now = Date.now();
+      let elapsedSinceStart = Math.max(0, Math.floor((now - timerPhaseStartTime) / 1000));
+      let currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
+      let crossedPhase = false;
+
+      // 브라우저/OS가 백그라운드 JS를 멈췄다가 다시 실행해도 벽시계 기준으로 즉시 따라잡는다.
+      while (currentPhaseSec <= 0 && timerState === "running") {
+        crossedPhase = true;
+        timerTotalElapsed += timerPhaseRemainingAtPause;
+        elapsedSinceStart -= timerPhaseRemainingAtPause;
+        currentPhaseIndex++;
+
+        if (currentPhaseIndex >= timerPhases.length) {
+          // 최종 완료 알림은 finishTimer 전에 정확히 한 번 발생시킨다.
+          if (alertOnCross) triggerTimerAlert(true);
+          finishTimer();
+          return;
+        }
+
+        timerPhaseRemainingAtPause = timerPhases[currentPhaseIndex];
+        currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
+      }
+
+      if (crossedPhase) {
+        // 여러 구간을 건너뛴 경우에도 현재 구간의 실제 시작시각을 복원한다.
+        timerPhaseStartTime = now - (elapsedSinceStart * 1000);
+        saveActiveSessionCheckpoint();
+        if (alertOnCross) triggerTimerAlert(false);
+      }
+
+      updateTimerRunningDisplay();
+      updateDisplay();
+    }
+
     function runTimerLoop() {
       if (timerLoop) clearInterval(timerLoop);
+      // 시작/복구 직후에도 500ms를 기다리지 않고 현재 시각으로 맞춘다.
+      syncTimerToNow();
+      if (timerState !== "running") return;
 
       timerLoop = setInterval(() => {
-        if (timerState !== "running") return;
-
-        const now = Date.now();
-        let elapsedSinceStart = Math.floor((now - timerPhaseStartTime) / 1000);
-        let currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
-        let crossedPhase = false;
-
-        // 백그라운드에서 JS 실행이 지연되어도 실제 경과시간만큼 구간을 따라잡는다.
-        while (currentPhaseSec <= 0 && timerState === "running") {
-          crossedPhase = true;
-          timerTotalElapsed += timerPhaseRemainingAtPause;
-          elapsedSinceStart -= timerPhaseRemainingAtPause;
-          currentPhaseIndex++;
-
-          if (currentPhaseIndex >= timerPhases.length) {
-            triggerTimerAlert();
-            finishTimer();
-            return;
-          }
-
-          timerPhaseRemainingAtPause = timerPhases[currentPhaseIndex];
-          currentPhaseSec = timerPhaseRemainingAtPause - elapsedSinceStart;
-        }
-
-        if (crossedPhase) {
-          // 이전 구간을 넘긴 초과 경과시간도 새 구간에 그대로 반영한다.
-          timerPhaseStartTime = now - (elapsedSinceStart * 1000);
-          triggerTimerAlert();
-        }
-
-        updateTimerRunningDisplay();
-        updateDisplay();
+        syncTimerToNow();
       }, 500);
+    }
+
+    function syncRunningClocksAfterResume() {
+      // Count Up은 Date.now() 기반이라 updateDisplay만 해도 실제 경과시간으로 즉시 복구된다.
+      if (timerState === "running") syncTimerToNow();
+      else updateDisplay();
+      saveActiveSessionCheckpoint();
     }
 
     function pauseTimer() {
@@ -2620,8 +2636,9 @@
         clearActiveSessionCheckpoint();
       }
 
-      const display = document.getElementById("timerRemaining");
+      const display = document.getElementById("timerRemainingDisplay");
       if (display) display.textContent = formatTimer(0);
+      updateTimerRunningDisplay();
       updateDisplay();
     }
 
@@ -2632,11 +2649,10 @@
       }
     }
 
-    async function showBackgroundTimerNotification() {
+    async function showBackgroundTimerNotification(isFinalPhase = false) {
       if (!("Notification" in window) || Notification.permission !== "granted") return;
       if (!("serviceWorker" in navigator)) return;
 
-      const isFinalPhase = currentPhaseIndex === timerPhases.length - 1;
       const title = isFinalPhase ? "On It · Timer complete" : "On It · Timer";
       const body = isFinalPhase
         ? "타이머가 완료되었습니다."
@@ -2739,12 +2755,12 @@
       }, 200);
     }
 
-    function triggerTimerAlert() {
+    function triggerTimerAlert(isFinalPhase = false) {
       if (alertMode === "sound") {
         playAlertSound();
       } else {
         flashScreen();
-        showBackgroundTimerNotification();
+        showBackgroundTimerNotification(isFinalPhase);
       }
     }
 
@@ -3560,6 +3576,14 @@
       });
     }
 
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") syncRunningClocksAfterResume();
+      else saveActiveSessionCheckpoint();
+    });
+    window.addEventListener("pageshow", syncRunningClocksAfterResume);
+    window.addEventListener("focus", syncRunningClocksAfterResume);
+    window.addEventListener("pagehide", saveActiveSessionCheckpoint);
 
     window.addEventListener("DOMContentLoaded", async () => {
       initPWA();
