@@ -947,6 +947,40 @@
       background: #2a2a2a;
     }
 
+    .data-management-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .settings-option .data-management-actions button {
+      min-width: 88px;
+    }
+
+    #backupJsonInput,
+    #csvFileInput,
+    #timelogCsvInput { display: none; }
+
+    @media (max-width: 560px) {
+      .data-management-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .data-management-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .settings-option .data-management-actions button {
+        min-width: 0;
+        width: 100%;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
+
     .settings-current {
       color: #999;
       font-size: 14px;
@@ -1564,12 +1598,6 @@
 
     <div class="records-list" id="recordsList"></div>
 
-    <div class="records-toolbar records-toolbar-bottom">
-      <button onclick="triggerImportCSV()">CSV 불러오기</button>
-      <button onclick="exportRecordsCSV()">CSV 내보내기</button>
-      <button class="btn-reset" onclick="clearAllRecords()">타이머 기록 삭제</button>
-    </div>
-    <input type="file" id="csvFileInput" accept=".csv" onchange="importRecordsCSV(this)">
   </section>
 
 
@@ -1607,20 +1635,40 @@
       </div>
     </div>
 
-    <div class="timelog-data-box">
-      <div class="timelog-data-title">데이터 관리</div>
-      <div class="timelog-data-actions">
-        <button onclick="exportTimeLogCSVs()">CSV 내보내기</button>
-        <button onclick="triggerTimeLogImport()">CSV 가져오기</button>
-        <button class="danger" onclick="clearAllTimeLogRecords()">로그 기록 삭제</button>
-      </div>
-      <input type="file" id="timelogCsvInput" accept=".csv" onchange="importTimeLogCSV(this)">
-    </div>
   </section>
 
 
   <section class="settings-page" id="settingsPage" style="display: none;">
-    <div class="settings-section"><div class="settings-title">통합 기록 백업</div><div class="settings-option"><div class="settings-option-label">전체 기록 백업</div><button onclick="exportBackupJSON()">JSON 내보내기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 복원</div><button onclick="triggerBackupJSONImport()">JSON 불러오기</button></div><div class="settings-option"><div class="settings-option-label">전체 기록 초기화</div><button class="backup-danger" onclick="clearIntegratedRecords()">초기화</button></div><div class="settings-current">History · Day Log</div><input type="file" id="backupJsonInput" accept=".json,application/json" onchange="importBackupJSON(this)"></div>
+    <div class="settings-section data-management-section">
+      <div class="settings-title">데이터 관리</div>
+      <div class="settings-option data-management-row">
+        <div class="settings-option-label">전체</div>
+        <div class="data-management-actions">
+          <button onclick="exportBackupJSON()">백업</button>
+          <button onclick="triggerBackupJSONImport()">복원</button>
+          <button class="backup-danger" onclick="clearIntegratedRecords()">초기화</button>
+        </div>
+      </div>
+      <div class="settings-option data-management-row">
+        <div class="settings-option-label">타이머</div>
+        <div class="data-management-actions">
+          <button onclick="exportRecordsCSV()">CSV 백업</button>
+          <button onclick="triggerImportCSV()">CSV 복원</button>
+          <button class="backup-danger" onclick="clearAllRecords()">초기화</button>
+        </div>
+      </div>
+      <div class="settings-option data-management-row">
+        <div class="settings-option-label">데이로그</div>
+        <div class="data-management-actions">
+          <button onclick="exportTimeLogCSVs()">CSV 백업</button>
+          <button onclick="triggerTimeLogImport()">CSV 복원</button>
+          <button class="backup-danger" onclick="clearAllTimeLogRecords()">초기화</button>
+        </div>
+      </div>
+      <input type="file" id="backupJsonInput" accept=".json,application/json" onchange="importBackupJSON(this)">
+      <input type="file" id="csvFileInput" accept=".csv" onchange="importRecordsCSV(this)">
+      <input type="file" id="timelogCsvInput" accept=".csv" onchange="importTimeLogCSV(this)">
+    </div>
 
     <div class="settings-section background-settings">
       <div class="settings-title">배경</div>
